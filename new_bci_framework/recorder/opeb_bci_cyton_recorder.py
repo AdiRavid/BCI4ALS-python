@@ -1,5 +1,6 @@
 import atexit
 import threading
+import numpy as np
 from typing import Optional, List, Union
 
 import mne
@@ -42,7 +43,7 @@ class CytonRecorder(Recorder):
         # Other Params
         self.sfreq = self.board.get_sampling_rate(board_id)
         self.marker_row = self.board.get_marker_channel(self.board_id)
-        self.eeg_names = self.__get_board_names()
+        self.ch_names = self.__get_board_names(config.CHANNELS)
         self.data = None
 
     def start_recording(self):
@@ -57,7 +58,7 @@ class CytonRecorder(Recorder):
         self.__off()
 
     def get_raw_data(self) -> RawArray:
-        return self.__get_raw_data(self.__get_board_names())
+        return self.__get_raw_data(self.ch_names)
 
     def plot_live_data(self, block=True) -> Union[None, threading.Thread]:
         start_plot = lambda: Graph(self.board, self.__get_board_names())
@@ -86,10 +87,10 @@ class CytonRecorder(Recorder):
                 raise LookupError("FTDI-manufactured device not found. Please check the dongle is connected")
             return FTDIlist[0].device
 
-    def __get_board_names(self) -> List[str]:
+    def __get_board_names(self, channels: List[str]) -> List[str]:
         """The method returns the board's channels"""
-        if self.headset == "cyton":
-            return ['C3', 'C4', 'CZ', 'FC1', 'FC2', 'FC5', 'FC6', 'CP1', 'CP2', 'CP5', 'CP6', 'O1', 'O2', '--', '--', '--']
+        if channels:
+            return channels
         else:
             return self.board.get_eeg_names(self.board_id)
 
@@ -119,13 +120,12 @@ class CytonRecorder(Recorder):
         :param board_data: raw ndarray from board
         :return:
         """
-        eeg_data = board_data / 1000000  # BrainFlow returns uV, convert to V for MNE
+        board_data[:-1, :] = board_data[:-1, :] / 1000000  # BrainFlow returns uV, convert to V for MNE
 
         # Creating MNE objects from BrainFlow data arrays
-        ch_types = ['eeg'] * len(board_data)
-        info = mne.create_info(ch_names=ch_names, sfreq=self.sfreq, ch_types=ch_types)
-        raw = mne.io.RawArray(eeg_data, info, verbose=False)
-
+        ch_types = ['eeg'] * len(ch_names) + ['stim']
+        info = mne.create_info(ch_names=ch_names + ['STIM'], sfreq=self.sfreq, ch_types=ch_types)
+        raw = mne.io.RawArray(board_data, info, verbose=False)
         return raw
 
     def __get_board_data(self) -> NDArray:
@@ -138,9 +138,8 @@ class CytonRecorder(Recorder):
         :param ch_names: list[str] of channels to select
         :return: mne_raw data
         """
-
-        indices = [self.eeg_names.index(ch) for ch in ch_names]
-
+        ch_names = [ch_name for ch_name in ch_names if not ch_name.startswith('X')]
+        indices = [self.ch_names.index(ch) for ch in ch_names] + \
+                  [self.board.get_marker_channel(self.board_id)]
         data = self.data[indices]
-
         return self.__board_to_mne(data, ch_names)
