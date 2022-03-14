@@ -2,6 +2,7 @@ from ..paradigm.paradigm import Paradigm
 from ..config.config import Config
 from ..recorder.recorder import Recorder
 
+from time import sleep
 import numpy as np
 
 class MIParadigm(Paradigm):
@@ -19,4 +20,5 @@ class MIParadigm(Paradigm):
                                   size=self.num_trials * len(self.CLASSES))
         for event in events:
             print(self.CLASSES[event])
+            sleep(5)
             recorder.push_marker(event)

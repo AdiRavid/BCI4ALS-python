@@ -23,10 +23,9 @@ class CytonRecorder(Recorder):
                  headset: str = "cyton"):
         super(CytonRecorder, self).__init__(config)
 
-
+        # Board Id and Headset Name
         self.headset: str = headset
         self.board_id = board_id
-        # Board Id and Headset Name
 
         # synthetic headset name
         if board_id == BoardIds.SYNTHETIC_BOARD:
