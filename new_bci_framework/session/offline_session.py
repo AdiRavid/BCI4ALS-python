@@ -24,8 +24,6 @@ class OfflineSession(Session):
     def run_recording(self):
         self.recorder.start_recording()
         self.paradigm.start(self.recorder)
-        data = self.recorder.get_raw_data()
-        print()
         self.recorder.end_recording()
 
     # def run_preprocessing(self):
@@ -45,8 +43,11 @@ class OfflineSession(Session):
 
 if __name__ == '__main__':
     config = Config()
-    session = OfflineSession(CytonRecorder(None, BoardIds.SYNTHETIC_BOARD),
+    session = OfflineSession(CytonRecorder(config, BoardIds.SYNTHETIC_BOARD),
                              MIParadigm(config), config)
     session.run_recording()
+    session.raw_data = session.recorder.get_raw_data()
+    session.raw_data.save('test_raw.fif')
+
     print()
 
