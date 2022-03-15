@@ -4,6 +4,7 @@ from ..recorder.recorder import Recorder
 
 from time import sleep
 import numpy as np
+from nptyping import NDArray
 
 class MIParadigm(Paradigm):
     """
@@ -12,13 +13,17 @@ class MIParadigm(Paradigm):
 
     def __init__(self, config: Config):
         super(MIParadigm, self).__init__(config)
-        self.num_trials = config.NUM_TRIALS
+        self.num_trials_per_class = config.NUM_TRIALS_PER_CLASS
+        self.time_between_trials = Config.TIME_PER_TRIAL
         self.CLASSES = config.CLASSES
+        self.events = np.hstack([np.full((self.num_trials_per_class), key)
+                                 for key in self.CLASSES.keys()])
+        np.random.default_rng().shuffle(self.events)
 
     def start(self, recorder: Recorder):
-        events = np.random.choice(list(self.CLASSES.keys()),
-                                  size=self.num_trials * len(self.CLASSES))
-        for event in events:
-            print(self.CLASSES[event])
-            sleep(5)
+        for event in self.events:
             recorder.push_marker(event)
+            sleep(self.time_between_trials)
+
+    def get_events(self) -> NDArray:
+        return self.events

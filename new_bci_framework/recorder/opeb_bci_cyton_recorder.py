@@ -2,17 +2,17 @@ import atexit
 import threading
 import numpy as np
 from typing import Optional, List, Union
+from nptyping import NDArray
 
 import mne
 from mne.io import RawArray
-from nptyping import NDArray
-
-from .plot_rt_recording import Graph
-from .recorder import Recorder
 import serial.tools.list_ports
 from brainflow import BrainFlowInputParams, BoardShim, BoardIds
 
-from ..config.config import Config
+# from new_bci_framework.recorder.plot_rt_recording import Graph
+from new_bci_framework.recorder.recorder import Recorder
+
+from new_bci_framework.config.config import Config
 
 
 class CytonRecorder(Recorder):
@@ -60,14 +60,14 @@ class CytonRecorder(Recorder):
     def get_raw_data(self) -> RawArray:
         return self.__get_raw_data(self.ch_names)
 
-    def plot_live_data(self, block=True) -> Union[None, threading.Thread]:
-        start_plot = lambda: Graph(self.board, self.__get_board_names())
-        if block:
-            start_plot()
-        else:
-            thread = threading.Thread(target=start_plot)
-            thread.start()
-            return thread
+    # def plot_live_data(self, block=True) -> Union[None, threading.Thread]:
+    #     start_plot = lambda: Graph(self.board, self.__get_board_names())
+    #     if block:
+    #         start_plot()
+    #     else:
+    #         thread = threading.Thread(target=start_plot)
+    #         thread.start()
+    #         return thread
 
     def __find_serial_port(self) -> str:
         """
