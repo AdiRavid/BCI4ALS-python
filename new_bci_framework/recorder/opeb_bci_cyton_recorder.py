@@ -9,7 +9,7 @@ from mne.io import RawArray
 import serial.tools.list_ports
 from brainflow import BrainFlowInputParams, BoardShim, BoardIds
 
-# from new_bci_framework.recorder.plot_rt_recording import Graph
+from new_bci_framework.recorder.plot_rt_recording import Graph
 from new_bci_framework.recorder.recorder import Recorder
 
 from new_bci_framework.config.config import Config
@@ -60,14 +60,14 @@ class CytonRecorder(Recorder):
     def get_raw_data(self) -> RawArray:
         return self.__get_raw_data(self.ch_names)
 
-    # def plot_live_data(self, block=True) -> Union[None, threading.Thread]:
-    #     start_plot = lambda: Graph(self.board, self.__get_board_names())
-    #     if block:
-    #         start_plot()
-    #     else:
-    #         thread = threading.Thread(target=start_plot)
-    #         thread.start()
-    #         return thread
+    def plot_live_data(self, block=True) -> Union[None, threading.Thread]:
+        start_plot = lambda: Graph(self.board, self.__get_board_names())
+        if block:
+            start_plot()
+        else:
+            thread = threading.Thread(target=start_plot)
+            thread.start()
+            return thread
 
     def __find_serial_port(self) -> str:
         """
@@ -107,12 +107,7 @@ class CytonRecorder(Recorder):
 
     def __insert_marker(self, marker: float):
         """Insert an encoded marker into EEG data"""
-
-        # marker = self.encode_marker(status, label, index)  # encode marker
         self.board.insert_marker(marker)  # insert the marker to the stream
-
-        # print(f'Status: { status }, Marker: { marker }')  # debug
-        # print(f'Count: { self.board.get_board_data_count() }')  # debug
 
     def __board_to_mne(self, board_data: NDArray, ch_names: List[str]) -> mne.io.RawArray:
         """

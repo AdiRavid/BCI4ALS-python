@@ -18,5 +18,3 @@ class Paradigm:
     def start(self, recorder: Recorder) -> None:
         pass
 
-    def get_events(self) -> NDArray:
-        pass

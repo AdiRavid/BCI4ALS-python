@@ -1,8 +1,8 @@
-from new_bci_framework.recorder.recorder import Recorder
-from new_bci_framework.classifier.base_classifier import BaseClassifier
-from new_bci_framework.paradigm.paradigm import Paradigm
-from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.config.config import Config
+from new_bci_framework.recorder.recorder import Recorder
+from new_bci_framework.paradigm.paradigm import Paradigm
+from new_bci_framework.classifier.base_classifier import BaseClassifier
+from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 
 
 class Session:
@@ -11,15 +11,14 @@ class Session:
     simple public api for creating and running the session.
     """
 
-    def __init__(self, recorder: Recorder, paradigm: Paradigm,
-                 # preprocessor: PreprocessingPipeline,
-                 # classifier: BaseClassifier,
-                 config: Config):
+    def __init__(self, config: Config, recorder: Recorder, paradigm: Paradigm,
+                 preprocessor: PreprocessingPipeline,
+                 classifier: BaseClassifier):
+        self.config = config
         self.recorder = recorder
         self.paradigm = paradigm
-        # self.preprocessor = preprocessor
-        # self.classifier = classifier
-        self.config = config
+        self.preprocessor = preprocessor
+        self.classifier = classifier
         self.raw_data = None
         self.epoched_data = None
 
