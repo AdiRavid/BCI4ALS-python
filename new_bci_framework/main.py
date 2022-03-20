@@ -5,7 +5,6 @@ from new_bci_framework.paradigm.MI_paradigm import MIParadigm
 from new_bci_framework.ui.offline_ui import OfflineUI
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.classifier.base_classifier import BaseClassifier
-from new_bci_framework.recorder.test import main_test
 
 
 if __name__ == '__main__':

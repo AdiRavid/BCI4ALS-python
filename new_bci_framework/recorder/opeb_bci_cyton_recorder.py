@@ -27,6 +27,7 @@ class CytonRecorder(Recorder):
         # Board Id and Headset Name
         self.headset: str = headset
         self.board_id = board_id
+        self.channels = config.CHANNELS
 
         # synthetic headset name
         if board_id == BoardIds.SYNTHETIC_BOARD:
@@ -43,7 +44,7 @@ class CytonRecorder(Recorder):
         # Other Params
         self.sfreq = self.board.get_sampling_rate(board_id)
         self.marker_row = self.board.get_marker_channel(self.board_id)
-        self.ch_names = self.__get_board_names(config.CHANNELS)
+        self.ch_names = self.__get_board_names(self.channels)
         self.data = None
 
     def start_recording(self):
@@ -61,7 +62,7 @@ class CytonRecorder(Recorder):
         return self.__get_raw_data(self.ch_names)
 
     def plot_live_data(self, block=True) -> Union[None, threading.Thread]:
-        start_plot = lambda: Graph(self.board, self.__get_board_names())
+        start_plot = lambda: Graph(self.board, self.__get_board_names(self.channels))
         if block:
             start_plot()
         else:

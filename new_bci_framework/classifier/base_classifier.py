@@ -1,5 +1,5 @@
 import mne
-from ..config.config import Config
+from new_bci_framework.config.config import Config
 
 
 class BaseClassifier:
@@ -11,7 +11,10 @@ class BaseClassifier:
     def __init__(self, config: Config):
         pass
 
-    def fit(self, data=mne.Epochs):
+    def fit(self, data: mne.Epochs):
+        pass
+
+    def update(self, data: mne.Epochs):
         pass
 
     def predict(self, data: mne.Epochs):
