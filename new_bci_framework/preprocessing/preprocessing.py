@@ -11,15 +11,29 @@ class PreprocessingPipeline:
     Further design of this class can allow subclassing or other forms of modularity, allowing us to easily
     swap different pipelines.
     """
-
     def __init__(self, config: Config):
+        self.config = config
         pass
 
     def run_pipeline(self, data: mne.io.Raw) -> mne.Epochs:
-        filtered_data = self._highpass_lowpass_filter(data)
+        data = self.__add_annotations_from_stim(data)
+        filtered_data = self._highpass_lowpass_filter((data))
         filtered_data = self._notch_filter(filtered_data)
-        return filtered_data
 
+    def __add_annotations_from_stim(self, data: mne.io.Raw) -> mne.io.Raw:
+        """
+        Raw objects contains a STIM channel indicating events.
+        This method extracts the markers from this channels and adds them as annotations to the mne Raw object.
+        """
+        stim_ch_data = data.get_data('STIM')[0]
+        event_times = np.nonzero(stim_ch_data)[0]
+        event_vals = stim_ch_data[event_times]
+        events = np.stack([event_times, np.zeros_like(event_times), event_vals], axis=1)
+        annot_from_events = mne.annotations_from_events(
+            events=events, event_desc=self.config.CLASSES, sfreq=data.info['sfreq'])
+        data.set_annotations(annot_from_events)
+        data.drop_channels('STIM')
+        return data
     def _notch_filter(self, data: mne.io.Raw):
         data.notch_filter(freqs=50., filter_length=180)
         return data
