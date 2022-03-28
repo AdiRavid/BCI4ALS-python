@@ -1,7 +1,7 @@
 ########################################################################################################################
 #                                                      Imports                                                         #
 ########################################################################################################################
-from new_bci_framework.ui.offline_ui import OfflineUI
+from new_bci_framework.ui.offline_ui import UI
 from new_bci_framework.recorder.recorder import Recorder
 from new_bci_framework.config.config import Config
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
@@ -14,41 +14,13 @@ from nptyping import NDArray
 ########################################################################################################################
 #                                                   Implementation                                                     #
 ########################################################################################################################
-class CoAdaptiveUI(OfflineUI):
+class CoAdaptiveUI(UI):
 
-    def __init__(self, config: Config, preprocessor: PreprocessingPipeline, model: BaseClassifier):
+    def __init__(self, config: Config):
         super().__init__(config)
-        self.preprocessor = preprocessor
-        self.model = model
-
-        self.correct_pred_im = pg.image.load(config.CORRECT_PRED_IM)
-        self.wrong_pred_im = pg.image.load(config.WRONG_PRED_IM)
-
-        self.num_trials_for_prediction = config.NUM_TRIALS_FOR_PREDICTION
-        self.trial_counter = 0
-
-    def run(self, recorder: Recorder, events: NDArray):
-        super().run(recorder, events)
-
-    def mainloop(self, recorder: Recorder):
-        super().mainloop(recorder)
-
-    def single_iter_work(self, recorder: Recorder):
-        super().single_iter_work(recorder)
-        # TODO - process data and update model when needed
 
     def setup(self):
-        pg.display.set_caption('Co-Adaptive Training Session')
-        super().__setup()
+        super().setup()
 
-    def _handle_trial_end(self):
-        # TODO - predict and display prediction
-
-        # clear event:
-        super()._handle_trial_end()
-
-
-
-
-
-
+    def display_event(self, label: str) -> None:
+        super().display_event(label)
