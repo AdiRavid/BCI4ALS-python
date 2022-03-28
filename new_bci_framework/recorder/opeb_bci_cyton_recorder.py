@@ -28,6 +28,7 @@ class CytonRecorder(Recorder):
         self.headset: str = headset
         self.board_id = board_id
         self.channels = config.CHANNELS
+        self.empty_channel_prefix = config.EMPTY_CHANNEL_PREF
 
         # synthetic headset name
         if board_id == BoardIds.SYNTHETIC_BOARD:
@@ -134,7 +135,7 @@ class CytonRecorder(Recorder):
         :param ch_names: list[str] of channels to select
         :return: mne_raw data
         """
-        ch_names = [ch_name for ch_name in ch_names if not ch_name.startswith('X')]
+        ch_names = [ch_name for ch_name in ch_names if not ch_name.startswith(self.empty_channel_prefix)]
         indices = [self.ch_names.index(ch) for ch in ch_names] + \
                   [self.board.get_marker_channel(self.board_id)]
         data = self.data[indices]

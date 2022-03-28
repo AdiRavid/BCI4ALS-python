@@ -21,6 +21,9 @@ class CoAdaptiveUI(OfflineUI):
         self.preprocessor = preprocessor
         self.model = model
 
+        self.correct_pred_im = pg.image.load(config.CORRECT_PRED_IM)
+        self.wrong_pred_im = pg.image.load(config.WRONG_PRED_IM)
+
         self.num_trials_for_prediction = config.NUM_TRIALS_FOR_PREDICTION
         self.trial_counter = 0
 
@@ -34,14 +37,15 @@ class CoAdaptiveUI(OfflineUI):
         super().single_iter_work(recorder)
         # TODO - process data and update model when needed
 
-    def _setup(self):
+    def setup(self):
         pg.display.set_caption('Co-Adaptive Training Session')
-        super()._setup()
+        super().__setup()
 
-    def _handle_event_end(self):
+    def _handle_trial_end(self):
         # TODO - predict and display prediction
+
         # clear event:
-        super()._handle_event_end()
+        super()._handle_trial_end()
 
 
 

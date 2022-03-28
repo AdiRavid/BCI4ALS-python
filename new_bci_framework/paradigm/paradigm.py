@@ -13,7 +13,7 @@ class Paradigm:
     """
 
     def __init__(self, config: Config):
-        pass
+        self.config = config
 
     def start(self, recorder: Recorder) -> None:
         pass

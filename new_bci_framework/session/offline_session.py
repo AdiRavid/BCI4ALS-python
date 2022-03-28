@@ -20,6 +20,7 @@ class OfflineSession(Session):
                          preprocessor, classifier)
 
     def run_recording(self):
+        from time import sleep
         self.recorder.start_recording()
         self.paradigm.start(self.recorder)
         self.recorder.end_recording()
