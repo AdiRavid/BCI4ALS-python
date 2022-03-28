@@ -1,7 +1,6 @@
 from ..recorder.recorder import Recorder
 from ..config.config import Config
 
-from nptyping import NDArray
 
 class Paradigm:
     """
@@ -12,9 +11,10 @@ class Paradigm:
     Sublcasses may represent different paradigms such as p300, MI, etc.
     """
 
+
     def __init__(self, config: Config):
         self.config = config
 
-    def start(self, recorder: Recorder) -> None:
-        pass
+    def start(self, recorder: Recorder):
+        raise NotImplementedError
 

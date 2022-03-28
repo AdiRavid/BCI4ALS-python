@@ -24,12 +24,21 @@ class OfflineSession(Session):
         self.recorder.start_recording()
         self.paradigm.start(self.recorder)
         self.recorder.end_recording()
-
-    def run_preprocessing(self):
         self.raw_data = self.recorder.get_raw_data()
-        # TODO - modifications until we are finished with the preprocessing pipeline
         self.raw_data.save(f'../data/{self.config.SUBJECT_NAME}_{self.config.DATE}_raw.fif')
-        # self.epoched_data = self.preprocessor.run_pipeline(self.raw_data)
+
+    def run_preprocessing(self,raw_data = None):
+        if raw_data is None:
+            self.raw_data = self.recorder.get_raw_data()
+            # TODO - modifications until we are finished with the preprocessing pipeline
+            self.raw_data.save(f'../data/{self.config.SUBJECT_NAME}_{self.config.DATE}_raw.fif')
+        else:
+            self.raw_data = raw_data
+        self.epoched_data = self.preprocessor.run_pipeline(self.raw_data)
+
+    #feature selecion
+    def feature_selection(self):
+        pass
 
     def run_classifier(self):
         train_data, test_data = train_test_split(self.epoched_data)
@@ -39,6 +48,7 @@ class OfflineSession(Session):
     def run_all(self):
         self.run_recording()
         self.run_preprocessing()
+        self.feature_selection()
         # self.run_classifier()
 
 

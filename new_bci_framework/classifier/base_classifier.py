@@ -22,3 +22,7 @@ class BaseClassifier:
 
     def evaluate(self, data: mne.Epochs):
         pass
+
+    # pick features
+    def feature_selection(self,config):
+        pass

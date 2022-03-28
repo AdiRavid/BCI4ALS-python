@@ -7,8 +7,11 @@ from new_bci_framework.preprocessing.preprocessing_pipeline import Preprocessing
 from new_bci_framework.classifier.base_classifier import BaseClassifier
 
 
+from mne.io import read_raw_fif
+
 if __name__ == '__main__':
     config = Config()
+    raw_data = read_raw_fif('/Users/maysanb/PycharmProjects/BCI4ALS-python/data/Synth_2022-03-16_raw.fif', preload=True);
     session = OfflineSession(
         recorder=CytonRecorder(config, board_id=BoardIds.SYNTHETIC_BOARD),
         paradigm=MIParadigm(config, OfflineUI(config)),
@@ -16,4 +19,5 @@ if __name__ == '__main__':
         classifier=BaseClassifier(config),
         config=config
     )
-    session.run_all()
+    #session.run_recording()
+    session.run_preprocessing(raw_data)

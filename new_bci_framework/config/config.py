@@ -1,4 +1,6 @@
 from datetime import datetime
+from typing import Dict
+
 
 
 class Config:
@@ -34,3 +36,19 @@ class Config:
 
         # UI:
         self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
+
+        # This needs to be an dict where the keys are stim values and the values are their labels
+        # TRIAL_LABELS: Dict[int, str] = dict()
+        self.TRIAL_LABELS = {"LEFT": 1, "RIGHT": 2, "NONE": 3}
+        # Set trial start and end times in seconds relative to stimulus (for example -0.2, 0.9)
+        self.TRIAL_START_TIME = -0.1
+        self.TRIAL_END_TIME = 0.5
+
+        # PREPROCESSING:
+        self.SESSION_SAVE_DIR = '../..'
+        self.HIGH_PASS_FILTER = 0.1
+        self.LOW_PASS_FILTER = 40
+        self.NOTCH_FILTER = 50
+
+        # CLASSIFICATION:
+        self.NUM_OF_FEATURES = 10
