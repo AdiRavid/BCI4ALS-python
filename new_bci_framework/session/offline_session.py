@@ -5,6 +5,7 @@ from new_bci_framework.paradigm.paradigm import Paradigm
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.config.config import Config
 
+from mne.io import read_raw_fif
 from sklearn.model_selection import train_test_split
 
 
@@ -19,24 +20,23 @@ class OfflineSession(Session):
         super().__init__(config, recorder, paradigm,
                          preprocessor, classifier)
 
-    def run_recording(self):
-        from time import sleep
+    def run_recording(self, save=True):
         self.recorder.start_recording()
         self.paradigm.start(self.recorder)
         self.recorder.end_recording()
-        self.raw_data = self.recorder.get_raw_data()
-        self.raw_data.save(f'../data/{self.config.SUBJECT_NAME}_{self.config.DATE}_raw.fif')
 
-    def run_preprocessing(self,raw_data = None):
-        if raw_data is None:
+        if save:
             self.raw_data = self.recorder.get_raw_data()
-            # TODO - modifications until we are finished with the preprocessing pipeline
             self.raw_data.save(f'../data/{self.config.SUBJECT_NAME}_{self.config.DATE}_raw.fif')
+
+    def run_preprocessing(self, raw_data_path: str = ''):
+        if not raw_data_path:
+            self.raw_data = self.recorder.get_raw_data()
         else:
-            self.raw_data = raw_data
+            self.raw_data = read_raw_fif(raw_data_path)
+
         self.epoched_data = self.preprocessor.run_pipeline(self.raw_data)
 
-    #feature selecion
     def feature_selection(self):
         pass
 

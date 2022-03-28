@@ -11,11 +11,11 @@ class Config:
     """
 
     def __init__(self, name='Synth', num_trials=1):
-        # General:
+        # GENERAL:
         self.SUBJECT_NAME = name
         self.DATE = datetime.now().strftime('%Y-%m-%d-%H-%M')
 
-        # Headset:
+        # HEADSET:
         self.EMPTY_CHANNEL_PREF = 'X'
         self.NUM_EMPTY_CHANNELS = 3
         self.CHANNELS = ['C3', 'C4', 'CZ',
@@ -24,11 +24,10 @@ class Config:
                          'O1', 'O2']
         self.CHANNELS += [f'{self.EMPTY_CHANNEL_PREF}{i}' for i in range(1, self.NUM_EMPTY_CHANNELS + 1)]
 
-        # Paradigm:
-        self.CLASSES = ['LEFT', 'RIGHT']
+        # PARADIGM:
         self.IDLE_LABEL = 'IDLE'
-        self.CLASSES = self.CLASSES[:len(self.CLASSES) // 2] + [self.IDLE_LABEL] + self.CLASSES[len(self.CLASSES) // 2:]
-        self.CLASSES_MAP = {label: i for i, label in enumerate(self.CLASSES, start=1)}
+        self.CLASSES = ['LEFT', f'{self.IDLE_LABEL}', 'RIGHT']
+        self.TRIAL_LABELS = {label: i for i, label in enumerate(self.CLASSES, start=1)}
 
         self.NUM_TRIALS_PER_CLASS = num_trials
         self.TIME_PER_TRIAL = 1
@@ -37,18 +36,16 @@ class Config:
         # UI:
         self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
 
-        # This needs to be an dict where the keys are stim values and the values are their labels
-        # TRIAL_LABELS: Dict[int, str] = dict()
-        self.TRIAL_LABELS = {"LEFT": 1, "RIGHT": 2, "NONE": 3}
-        # Set trial start and end times in seconds relative to stimulus (for example -0.2, 0.9)
-        self.TRIAL_START_TIME = -0.1
-        self.TRIAL_END_TIME = 0.5
-
         # PREPROCESSING:
         self.SESSION_SAVE_DIR = '../..'
         self.HIGH_PASS_FILTER = 0.1
         self.LOW_PASS_FILTER = 40
         self.NOTCH_FILTER = 50
+
+        # SEGMENTATION
+        # Set trial start and end times in seconds relative to stimulus (for example -0.2, 0.9)
+        self.TRIAL_START_TIME = -0.1
+        self.TRIAL_END_TIME = 0.5
 
         # CLASSIFICATION:
         self.NUM_OF_FEATURES = 10

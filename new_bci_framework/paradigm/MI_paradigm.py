@@ -14,7 +14,7 @@ class MIParadigm(Paradigm):
 
     def __init__(self, config: Config, ui: UI):
         super(MIParadigm, self).__init__(config)
-        self.class_map = config.CLASSES_MAP
+        self.class_map = config.TRIAL_LABELS
 
         self.num_trials_per_class = config.NUM_TRIALS_PER_CLASS
         self.time_per_trial = config.TIME_PER_TRIAL
