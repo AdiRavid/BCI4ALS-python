@@ -33,7 +33,7 @@ class OfflineSession(Session):
         if not raw_data_path:
             self.raw_data = self.recorder.get_raw_data()
         else:
-            self.raw_data = read_raw_fif(raw_data_path)
+            self.raw_data = read_raw_fif(raw_data_path, preload=True)
 
         self.epoched_data = self.preprocessor.run_pipeline(self.raw_data)
 
