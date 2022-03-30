@@ -4,6 +4,7 @@
 import numpy as np
 
 from new_bci_framework.config.config import Config
+from new_bci_framework.recorder.recorder import Recorder
 
 import time
 import pygame as pg
@@ -28,7 +29,7 @@ class UI:
 
         # colors:
         self.bg_color = (248, 240, 227)
-        self.bar_color = '#306DA3'
+        self.bar_color = '#9b2226'
 
         # font:
         pg.font.init()
@@ -39,6 +40,7 @@ class UI:
         self.bar_h = 20
         self.bar_x = self.screen_width / 2 - self.bar_w / 2
         self.bar_y = self.screen_height * 0.9 - self.bar_h / 2
+        self.curr_work: int = 0
 
         # To be added after init
         self.work: int = np.nan
@@ -51,17 +53,19 @@ class UI:
 
         self.screen.fill(self.bg_color)
         self.display_message('Hello, training session will start soon', self.center)
-        time.sleep(2)
+        time.sleep(self.config.PAUSE_LENGTH * 2)
 
         self.screen.fill(self.bg_color)
         self.display_message('Starting now', self.center)
-        time.sleep(1)
 
-    def display_event(self, label: str) -> None:
+    def display_event(self, recorder: Recorder, label: str) -> None:
         raise NotImplemented
 
     def set_work(self, work):
         self.work = work
+
+    def set_curr_work(self, curr_work):
+        self.curr_work = curr_work
 
     def add_images(self, images: Dict[str, str]):
         images = {label: pg.image.load(img) for label, img in images.items()}
@@ -79,7 +83,7 @@ class UI:
         self.screen.blit(image, image_rect)
         pg.display.flip()
 
-    def update_progress_bar(self, work_remained=0):
+    def update_progress_bar(self):
         # Border:
         pg.draw.rect(self.screen, self.bar_color, pg.Rect(self.bar_x, self.bar_y, self.bar_w, self.bar_h), 1)
 
@@ -87,19 +91,20 @@ class UI:
         if self.work == 0 or np.isnan(self.work):
             progress = 1
         else:
-            progress = 1 - work_remained / self.work
+            progress = 1 - (self.work - self.curr_work) / self.work
         pg.draw.rect(self.screen, self.bar_color, pg.Rect(self.bar_x, self.bar_y, self.bar_w * progress, self.bar_h))
-
-        pg.display.flip()
 
     def clear_screen(self):
         self.screen.fill(self.bg_color)
+        self.update_progress_bar()
         pg.display.flip()
 
     def quit(self):
+        self.set_curr_work(self.work)
         self.clear_screen()
+        time.sleep(self.config.PAUSE_LENGTH)
         self.display_message('Session is over, Thanks!', self.center)
-        time.sleep(1)
+        time.sleep(self.config.PAUSE_LENGTH)
         pg.quit()
 
     @staticmethod

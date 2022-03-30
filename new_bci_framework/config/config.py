@@ -30,10 +30,12 @@ class Config:
         self.TRIAL_LABELS = {label: i for i, label in enumerate(self.CLASSES, start=1)}
 
         self.NUM_TRIALS_PER_CLASS = num_trials
-        self.TIME_PER_TRIAL = 1
-        self.TIME_BETWEEN_TRIALS = 1
 
         # UI:
+        self.PRE_CUE_LENGTH = 2
+        self.PAUSE_LENGTH = 1
+        self.CUE_LENGTH = 3
+
         self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
 
         # PREPROCESSING:

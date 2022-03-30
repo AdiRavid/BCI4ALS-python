@@ -31,14 +31,14 @@ class PreprocessingPipeline:
                             events,
                             tmin=self._config.TRIAL_START_TIME,
                             tmax=self._config.TRIAL_END_TIME,
-                            event_id= self._config.TRIAL_LABELS,
+                            event_id=self._config.TRIAL_LABELS,
                             verbose='INFO',
                             on_missing='warn')
         self.epochs = epochs
         return epochs
 
     def __feature_extraction(self, raw_data: mne.io.Raw):
-        labels = np.array(self._config.CLASSES.keys())
+        # labels = np.array(self._config.TRIAL_LABELS.values())
 
         bands_mat = [[15.5, 18.5],
                      [8, 10.5],

@@ -3,6 +3,7 @@
 ########################################################################################################################
 from new_bci_framework.ui.ui import UI
 from new_bci_framework.config.config import Config
+from new_bci_framework.recorder.recorder import Recorder
 
 import pygame as pg
 from time import sleep
@@ -29,9 +30,17 @@ class OfflineUI(UI):
         pg.display.set_caption('Offline Session')
         super().setup()
 
-    def display_event(self, label: str):
-        sleep(self.config.TIME_BETWEEN_TRIALS)
-        self.display_message(msg=label)
+    def display_event(self, recorder: Recorder, label: str):
+        sleep(self.config.PAUSE_LENGTH)
+
+        self.display_message(msg=f'READY? Think {label}')
         self.display_image(self.images[label])
-        sleep(self.config.TIME_PER_TRIAL)
+        sleep(self.config.PRE_CUE_LENGTH)
+
+        self.clear_screen()
+        sleep(self.config.PAUSE_LENGTH)
+
+        recorder.push_marker(self.config.TRIAL_LABELS[label])
+        self.display_image(self.images[label])
+        sleep(self.config.CUE_LENGTH)
         self.clear_screen()

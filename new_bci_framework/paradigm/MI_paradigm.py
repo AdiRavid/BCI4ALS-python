@@ -14,11 +14,8 @@ class MIParadigm(Paradigm):
 
     def __init__(self, config: Config, ui: UI):
         super(MIParadigm, self).__init__(config)
-        self.class_map = config.TRIAL_LABELS
-
+        self.trial_labels = config.TRIAL_LABELS
         self.num_trials_per_class = config.NUM_TRIALS_PER_CLASS
-        self.time_per_trial = config.TIME_PER_TRIAL
-        self.time_between_trials = config.TIME_BETWEEN_TRIALS
 
         self.events = self.__get_event_list()
         self.work = len(self.events)
@@ -30,15 +27,15 @@ class MIParadigm(Paradigm):
         self.ui.set_work(len(self.events))
 
         for i in range(self.work):
+            self.ui.set_curr_work(i)
             self.ui.clear_screen()
-            self.ui.update_progress_bar(work_remained=self.work - i)
             if self.ui.need_to_quit():
                 break
-            self.ui.display_event(self.events[i])
+            self.ui.display_event(recorder, self.events[i])
         self.ui.quit()
 
     def __get_event_list(self):
-        events = np.hstack([np.full(self.num_trials_per_class, key) for key in self.class_map.keys()])
+        events = np.hstack([np.full(self.num_trials_per_class, key) for key in self.trial_labels.keys()])
         np.random.default_rng().shuffle(events)
         return events
 
