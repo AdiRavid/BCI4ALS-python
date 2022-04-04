@@ -51,3 +51,4 @@ class Config:
 
         # CLASSIFICATION:
         self.NUM_OF_FEATURES = 10
+        self.MODEL_PATH = f'model.sav'

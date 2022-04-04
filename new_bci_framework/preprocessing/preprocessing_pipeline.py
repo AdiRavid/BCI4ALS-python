@@ -37,7 +37,7 @@ class PreprocessingPipeline:
         self.epochs = epochs
         return epochs
 
-    def __feature_extraction(self, raw_data: mne.io.Raw):
+    def __feature_extraction(self, raw_data: mne.io.Raw) -> (np.ndarray, mne.epochs):
         # labels = np.array(self._config.TRIAL_LABELS.values())
 
         bands_mat = [[15.5, 18.5],
@@ -52,11 +52,11 @@ class PreprocessingPipeline:
         lowpass = self._config.LOW_PASS_FILTER
 
         data = self.epochs.get_data()
-        #y = labels
+        # y = labels
 
         # todo: try other funcs
         selected_funcs = {'pow_freq_bands', 'rms',
-                          #'spect_edge_freq', #todo: debug fail when using this func
+                          # 'spect_edge_freq', #todo: debug fail when using this func
                           'spect_entropy',
                           'spect_slope',
                           'mean', 'variance', 'std', 'skewness', 'ptp_amp',
@@ -65,14 +65,15 @@ class PreprocessingPipeline:
                        'spect_slope__fmax': lowpass,
                        'spect_slope__fmin': highpass,
                        }
-        return extract_features(data, sfreq, selected_funcs, funcs_params=func_params)
+        features = extract_features(data, sfreq, selected_funcs, funcs_params=func_params)
+        return features, self.epochs
 
-    def __filter(self,  data: mne.io.Raw) -> None:
+    def __filter(self, data: mne.io.Raw) -> None:
         data.filter(l_freq=self._config.LOW_PASS_FILTER, h_freq=self._config.HIGH_PASS_FILTER)
         if self._config.NOTCH_FILTER:
             data.notch_filter(self._config.NOTCH_FILTER)
 
-    def run_pipeline(self, data: mne.io.Raw) -> mne.Epochs:
+    def run_pipeline(self, data: mne.io.Raw) -> (np.ndarray,mne.epochs):
         self.__filter(data)
         self.__segment(data)
         return self.__feature_extraction(data)

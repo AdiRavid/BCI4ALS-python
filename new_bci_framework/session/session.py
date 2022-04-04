@@ -21,6 +21,8 @@ class Session:
         self.classifier = classifier
         self.raw_data = None
         self.epoched_data = None
+        self.features = None
+
 
     def run_all(self):
         pass

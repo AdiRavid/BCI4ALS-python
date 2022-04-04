@@ -4,6 +4,7 @@ from new_bci_framework.classifier.base_classifier import BaseClassifier
 from new_bci_framework.paradigm.paradigm import Paradigm
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.config.config import Config
+import numpy as np
 
 from mne.io import read_raw_fif
 from sklearn.model_selection import train_test_split
@@ -35,21 +36,25 @@ class OfflineSession(Session):
         else:
             self.raw_data = read_raw_fif(raw_data_path, preload=True)
 
-        self.epoched_data = self.preprocessor.run_pipeline(self.raw_data)
+        self.features,  self.epoched_data = self.preprocessor.run_pipeline(self.raw_data)
 
     def feature_selection(self):
         pass
 
     def run_classifier(self):
-        train_data, test_data = train_test_split(self.epoched_data)
+        labels = self.epoched_data.events[:,2]
+        all_data = np.concatenate((self.epoched_data.events[:,2].reshape((15,1)),self.features),axis=1)
+        train_data, test_data = train_test_split(all_data)
         self.classifier.fit(train_data)
         evaluation = self.classifier.evaluate(test_data)
 
     def run_all(self):
         self.run_recording()
         self.run_preprocessing()
+        # run preprocess on an existing file.
+        # self.run_preprocessing(raw_data_path="C:\\Users\\ASUS\\Documents\\BCI4ALS-python-new\\data\\Synth_2022-04-04-10-02_raw.fif")
         self.feature_selection()
-        # self.run_classifier()
+        self.run_classifier()
 
 
 

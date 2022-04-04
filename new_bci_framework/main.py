@@ -8,10 +8,12 @@ from new_bci_framework.classifier.base_classifier import BaseClassifier
 
 
 if __name__ == '__main__':
-    config = Config()
+    config = Config(num_trials=20)
     boardID = BoardIds.SYNTHETIC_BOARD  # TODO-change to BoardIds.CYTON_BOARD when running real experiments
+    # boardID = BoardIds.CYTON_BOARD
     session = OfflineSession(
-        recorder=CytonRecorder(config, board_id=boardID),
+        recorder=CytonRecorder(config, board_id=boardID), # TODO: change when running without recording
+        # recorder=None,
         paradigm=MIParadigm(config, OfflineUI(config)),
         preprocessor=PreprocessingPipeline(config),
         classifier=BaseClassifier(config),
