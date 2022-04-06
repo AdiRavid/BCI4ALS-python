@@ -8,6 +8,7 @@ import numpy as np
 
 from mne.io import read_raw_fif
 from sklearn.model_selection import train_test_split
+from sklearn.feature_selection import SelectKBest, f_classif
 
 
 class OfflineSession(Session):
@@ -30,30 +31,38 @@ class OfflineSession(Session):
             self.raw_data = self.recorder.get_raw_data()
             self.raw_data.save(f'../data/{self.config.SUBJECT_NAME}_{self.config.DATE}_raw.fif')
 
-    def run_preprocessing(self, raw_data_path: str = ''):
-        if not raw_data_path:
-            self.raw_data = self.recorder.get_raw_data()
-        else:
-            self.raw_data = read_raw_fif(raw_data_path, preload=True)
+    def run_preprocessing(self):
+        self.epoched_data,  self.epoched_labels = self.preprocessor.run_pipeline(self.raw_data)
+        #self.preprocessor.run_pipeline(self.raw_data)
 
-        self.features,  self.epoched_data = self.preprocessor.run_pipeline(self.raw_data)
 
+    # chose features
+    # data is of size (n_epochs, n_features)
+    # labels is of size n_epochs
     def feature_selection(self):
-        pass
+        num_of_features = self.config.NUM_OF_FEATURES
+
+        X = self.epoched_data
+        y = self.epoched_labels.ravel()
+        self.data_in_features = SelectKBest(score_func=f_classif, k=num_of_features).fit_transform(X, y)
 
     def run_classifier(self):
-        labels = self.epoched_data.events[:,2]
-        all_data = np.concatenate((self.epoched_data.events[:,2].reshape((15,1)),self.features),axis=1)
+        labels =  self.epoched_labels.ravel()
+        all_data = np.concatenate((labels, self.data_in_features), axis=1)
         train_data, test_data = train_test_split(all_data)
         self.classifier.fit(train_data)
         evaluation = self.classifier.evaluate(test_data)
 
-    def run_all(self):
-        self.run_recording()
+    # if given raw_data it will do the pipeline on it
+    # if no data were given it will evoke the recorder
+    def run_all(self, raw_data_path=''):
+        if not raw_data_path:
+            self.run_recording()
+            self.raw_data = self.recorder.get_raw_data()
+        else:
+            self.raw_data = read_raw_fif(raw_data_path, preload=True)
         self.run_preprocessing()
-        # run preprocess on an existing file.
-        # self.run_preprocessing(raw_data_path="C:\\Users\\ASUS\\Documents\\BCI4ALS-python-new\\data\\Synth_2022-04-04-10-02_raw.fif")
-        self.feature_selection()
+        data_in_features = self.feature_selection()
         self.run_classifier()
 
 

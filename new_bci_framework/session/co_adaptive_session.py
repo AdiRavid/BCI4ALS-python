@@ -14,5 +14,5 @@ class CoAdaptiveSession(Session):
                  classifier: BaseClassifier):
         super().__init__(config, recorder, paradigm, preprocessor, classifier)
 
-    def run_all(self):
+    def run_all(self, raw_data_path=''):
         super().run_all()

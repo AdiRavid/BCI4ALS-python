@@ -34,5 +34,5 @@ class BaseClassifier:
         prediction = loaded_model.predict(data[:, 1:])
 
     # pick features
-    def feature_selection(self, config):
+    def feature_selection(self,config):
         pass

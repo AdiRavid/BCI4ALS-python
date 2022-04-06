@@ -37,9 +37,7 @@ class PreprocessingPipeline:
         self.epochs = epochs
         return epochs
 
-    def __feature_extraction(self, raw_data: mne.io.Raw) -> (np.ndarray, mne.epochs):
-        # labels = np.array(self._config.TRIAL_LABELS.values())
-
+    def __feature_extraction(self, raw_data: mne.io.Raw):
         bands_mat = [[15.5, 18.5],
                      [8, 10.5],
                      [10, 15.5],
@@ -51,12 +49,12 @@ class PreprocessingPipeline:
         highpass = self._config.HIGH_PASS_FILTER
         lowpass = self._config.LOW_PASS_FILTER
 
-        data = self.epochs.get_data()
-        # y = labels
+        data_channels = self.epochs.ch_names[0:-1] #remove 'STIM' channel
+        data = self.epochs.get_data(data_channels)
 
         # todo: try other funcs
         selected_funcs = {'pow_freq_bands', 'rms',
-                          # 'spect_edge_freq', #todo: debug fail when using this func
+                          #'spect_edge_freq', #todo: debug fail when using this func
                           'spect_entropy',
                           'spect_slope',
                           'mean', 'variance', 'std', 'skewness', 'ptp_amp',
@@ -65,15 +63,17 @@ class PreprocessingPipeline:
                        'spect_slope__fmax': lowpass,
                        'spect_slope__fmin': highpass,
                        }
-        features = extract_features(data, sfreq, selected_funcs, funcs_params=func_params)
-        return features, self.epochs
+        self.epoched_data = extract_features(data, sfreq, selected_funcs, funcs_params=func_params)
+        self.epoched_labels = self.epochs.get_data('STIM')[:, :, 25]
+        np.reshape(self.epoched_labels, self.epoched_labels.shape[0])
+        return self.epoched_data, self.epoched_labels
 
-    def __filter(self, data: mne.io.Raw) -> None:
+    def __filter(self,  data: mne.io.Raw) -> None:
         data.filter(l_freq=self._config.LOW_PASS_FILTER, h_freq=self._config.HIGH_PASS_FILTER)
         if self._config.NOTCH_FILTER:
             data.notch_filter(self._config.NOTCH_FILTER)
 
-    def run_pipeline(self, data: mne.io.Raw) -> (np.ndarray,mne.epochs):
+    def run_pipeline(self, data: mne.io.Raw) -> mne.Epochs:
         self.__filter(data)
         self.__segment(data)
         return self.__feature_extraction(data)

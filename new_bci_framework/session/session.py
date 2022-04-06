@@ -21,10 +21,11 @@ class Session:
         self.classifier = classifier
         self.raw_data = None
         self.epoched_data = None
-        self.features = None
+        self.epoched_labels = None
+        self.data_in_features = None
 
 
-    def run_all(self):
+    def run_all(self, raw_data_path=''):
         pass
 
     @staticmethod
