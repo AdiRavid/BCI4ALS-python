@@ -1,3 +1,4 @@
+from new_bci_framework.classifier.sgd_classifier import SGDClassifier
 from new_bci_framework.config.config import Config
 from new_bci_framework.recorder.recorder import Recorder
 from new_bci_framework.paradigm.paradigm import Paradigm
@@ -13,7 +14,7 @@ class Session:
 
     def __init__(self, config: Config, recorder: Recorder, paradigm: Paradigm,
                  preprocessor: PreprocessingPipeline,
-                 classifier: BaseClassifier):
+                 classifier: BaseClassifier, sgd_classifier: SGDClassifier):
         self.config = config
         self.recorder = recorder
         self.paradigm = paradigm
@@ -23,6 +24,7 @@ class Session:
         self.epoched_data = None
         self.epoched_labels = None
         self.data_in_features = None
+        self.sgd_classifier = sgd_classifier
 
 
     def run_all(self, raw_data_path=''):

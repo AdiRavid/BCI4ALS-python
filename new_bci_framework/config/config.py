@@ -37,6 +37,8 @@ class Config:
         self.CUE_LENGTH = 3
 
         self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
+        self.PREDICTED_CLASSES_IMS = {val: f'ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
+
 
         # PREPROCESSING:
         self.SESSION_SAVE_DIR = '../..'
@@ -50,5 +52,6 @@ class Config:
         self.TRIAL_END_TIME = 0.5
 
         # CLASSIFICATION:
-        self.NUM_OF_FEATURES = 10
+        self.NUM_OF_FEATURES = 15
+        self.NEW_MODEL = True  # TODO: if you wand to create a new model - set to TRUE (else- will update the existing model)
         self.MODEL_PATH = f'model.sav'
