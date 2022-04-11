@@ -9,21 +9,20 @@ from new_bci_framework.ui.offline_ui import OfflineUI
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.classifier.base_classifier import BaseClassifier
 import mne
+import os
 
-#TODO: make generic (look for files then concat them)
+search_path = os.path.join(os.getcwd(), "..")
+
 def concat_files():
-    d1 = r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\Synth_2022-04-04-10-02_raw_5_trials.fif"
-    d2 = r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\Synth_2022-04-04-10-09_raw_20_trials.fif"
-    d3 = r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\Synth_2022-04-04-10-51_raw_35_trials.fif"
-    d4 = r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\Synth_2022-04-04-11-06_raw_20_trials.fif"
+    raws = []
+    for root, dir, files in os.walk(search_path):
+        for file in files:
+            if file.endswith(".fif"):
+                file_full_path = os.path.join(root, file)
+                raws.append(read_raw_fif(file_full_path, preload=True))
 
-    r1 = read_raw_fif(d1, preload=True)
-    r2 = read_raw_fif(d2, preload=True)
-    r3 = read_raw_fif(d3, preload=True)
-    r4 = read_raw_fif(d4, preload=True)
-
-    concated_raw = mne.concatenate_raws([r1, r2, r3, r4])
-    concated_raw.save(r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\all_files.fif")
+    concated_raw = mne.concatenate_raws(raws)
+    concated_raw.save(os.path.join(search_path, "data", "all_files.fif"))
 
 
 if __name__ == '__main__':
@@ -39,7 +38,5 @@ if __name__ == '__main__':
         config=config,
         sgd_classifier=SGDClassifier(config)
     )
-    session.run_all(raw_data_path=r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\all_files.fif")
-
-
-    # concat_files()
+    #concat_files()
+    session.run_all(raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
