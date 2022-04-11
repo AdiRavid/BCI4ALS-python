@@ -10,7 +10,7 @@ from new_bci_framework.preprocessing.preprocessing_pipeline import Preprocessing
 from new_bci_framework.classifier.base_classifier import BaseClassifier
 import mne
 
-
+#TODO: make generic (look for files then concat them)
 def concat_files():
     d1 = r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\Synth_2022-04-04-10-02_raw_5_trials.fif"
     d2 = r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\Synth_2022-04-04-10-09_raw_20_trials.fif"
