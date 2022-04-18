@@ -14,6 +14,10 @@ from new_bci_framework.recorder.recorder import Recorder
 
 from new_bci_framework.config.config import Config
 
+HARDWARE_SETTINGS_MSG_6 = "x1030110Xx2030110Xx3030110Xx4030110Xx5030110Xx6030110Xx7030110Xx8030110XxQ030110XxW030110XxE030110XxR030110XxT030110XxY131000XxU131000XxI131000X "
+HARDWARE_SETTINGS_MSG_4 = "x1020110Xx2020110Xx3020110Xx4020110Xx5020110Xx6020110Xx7020110Xx8020110XxQ020110XxW020110XxE020110XxR020110XxT020110XxY121000XxU121000XxI121000X "
+
+
 
 class CytonRecorder(Recorder):
 
@@ -99,6 +103,7 @@ class CytonRecorder(Recorder):
     def __on(self):
         """Turn EEG On"""
         self.board.prepare_session()
+        self.board.config_board(HARDWARE_SETTINGS_MSG_6)
         self.board.start_stream()
 
     def __off(self):
