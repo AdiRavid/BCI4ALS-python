@@ -33,6 +33,7 @@ class CytonRecorder(Recorder):
         self.board_id = board_id
         self.channels = config.CHANNELS
         self.empty_channel_prefix = config.EMPTY_CHANNEL_PREF
+        self.MONTAGE_FILENAME = config.MONTAGE_FILENAME
 
         # synthetic headset name
         if board_id == BoardIds.SYNTHETIC_BOARD:
@@ -103,7 +104,7 @@ class CytonRecorder(Recorder):
     def __on(self):
         """Turn EEG On"""
         self.board.prepare_session()
-        self.board.config_board(HARDWARE_SETTINGS_MSG_6)
+        self.board.config_board(HARDWARE_SETTINGS_MSG_4)
         self.board.start_stream()
 
     def __off(self):
@@ -127,11 +128,17 @@ class CytonRecorder(Recorder):
         # Creating MNE objects from BrainFlow data arrays
         ch_types = ['eeg'] * len(ch_names) + ['stim']
         info = mne.create_info(ch_names=ch_names + ['STIM'], sfreq=self.sfreq, ch_types=ch_types)
+        if self.board_id == BoardIds.CYTON_DAISY_BOARD:
+            montage = mne.channels.read_custom_montage(fname=self.MONTAGE_FILENAME)
+        else:
+            montage = mne.channels.make_standard_montage('biosemi64')
+        info.set_montage(montage)
         raw = mne.io.RawArray(board_data, info, verbose=False)
         return raw
 
     def __get_board_data(self) -> NDArray:
         """The method returns the data from board and remove it"""
+
         return self.board.get_board_data()
 
     def __get_raw_data(self, ch_names: List[str]) -> mne.io.RawArray:

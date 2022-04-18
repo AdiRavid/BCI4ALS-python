@@ -17,12 +17,13 @@ class Config:
 
         # HEADSET:
         self.EMPTY_CHANNEL_PREF = 'X'
-        self.NUM_EMPTY_CHANNELS = 3
         self.CHANNELS = ['C3', 'C4', 'CZ',
                          'FC1', 'FC2', 'FC5', 'FC6',
-                         'CP1', 'CP2', 'CP5', 'CP6',
-                         'O1', 'O2']
+                         'CP1', 'CP2', 'CP5', 'CP6']
+        self.NUM_EMPTY_CHANNELS = 16 - len(self.CHANNELS)
         self.CHANNELS += [f'{self.EMPTY_CHANNEL_PREF}{i}' for i in range(1, self.NUM_EMPTY_CHANNELS + 1)]
+        self.MONTAGE_FILENAME = r"C:\Users\ASUS\Documents\BCI4ALS-python-new\new_bci_framework\recorder\montage.loc"
+
 
         # PARADIGM:
         self.IDLE_LABEL = 'IDLE'

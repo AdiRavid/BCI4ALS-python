@@ -34,6 +34,8 @@ class PreprocessingPipeline:
         data.set_annotations(annot_from_events)
         data.drop_channels('STIM')
         return data
+
+
     def _notch_filter(self, data: mne.io.Raw):
         data.notch_filter(freqs=50., filter_length=180)
         return data

@@ -37,10 +37,9 @@ class OfflineUI(UI):
         self.display_image(self.images[label])
         sleep(self.config.PRE_CUE_LENGTH)
 
-        self.clear_screen()
-        sleep(self.config.PAUSE_LENGTH)
-
         recorder.push_marker(self.config.TRIAL_LABELS[label])
+
+        self.clear_screen()
         self.display_image(self.images[label])
         sleep(self.config.CUE_LENGTH)
         self.clear_screen()

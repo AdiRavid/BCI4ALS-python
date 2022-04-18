@@ -26,17 +26,17 @@ def concat_files():
 
 
 if __name__ == '__main__':
-    config = Config(num_trials=20)
-    # boardID = BoardIds.SYNTHETIC_BOARD  # TODO-change to BoardIds.CYTON_BOARD when running real experiments
-    boardID = BoardIds.CYTON_BOARD
+    config = Config(num_trials=2)
+    boardID = BoardIds.SYNTHETIC_BOARD  # TODO-change to BoardIds.CYTON_DAISY_BOARD when running real experiments
+    # boardID = BoardIds.CYTON_DAISY_BOARD
     session = OfflineSession(
-        # recorder=CytonRecorder(config, board_id=boardID),  # TODO: change when running without recording
-        recorder=None,
+        config=config,
+        recorder=CytonRecorder(config, board_id=boardID),  # TODO: change when running without recording
+        # recorder=None,
         paradigm=MIParadigm(config, OfflineUI(config)),
         preprocessor=PreprocessingPipeline(config),
         classifier=BaseClassifier(config),
-        config=config,
         sgd_classifier=SGDClassifier(config)
     )
     #concat_files()
-    session.run_all(raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
+    session.run_all() #raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
