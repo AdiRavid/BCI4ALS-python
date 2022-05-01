@@ -128,10 +128,8 @@ class CytonRecorder(Recorder):
         # Creating MNE objects from BrainFlow data arrays
         ch_types = ['eeg'] * len(ch_names) + ['stim']
         info = mne.create_info(ch_names=ch_names + ['STIM'], sfreq=self.sfreq, ch_types=ch_types)
-        if self.board_id == BoardIds.CYTON_DAISY_BOARD:
-            montage = mne.channels.read_custom_montage(fname=self.MONTAGE_FILENAME)
-        else:
-            montage = mne.channels.make_standard_montage('biosemi64')
+
+        montage = mne.channels.make_standard_montage('biosemi64')
         info.set_montage(montage)
         raw = mne.io.RawArray(board_data, info, verbose=False)
         return raw

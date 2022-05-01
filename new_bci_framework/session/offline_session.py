@@ -27,6 +27,7 @@ class OfflineSession(Session):
 
     def run_recording(self, save=True):
         self.recorder.start_recording()
+        self.recorder.plot_live_data()
         self.paradigm.start(self.recorder)
         self.recorder.end_recording()
 

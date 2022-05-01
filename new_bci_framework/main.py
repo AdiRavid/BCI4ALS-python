@@ -13,6 +13,7 @@ import os
 
 search_path = os.path.join(os.getcwd(), "..")
 
+
 def concat_files():
     raws = []
     for root, dir, files in os.walk(search_path):
@@ -26,9 +27,9 @@ def concat_files():
 
 
 if __name__ == '__main__':
-    config = Config(num_trials=2)
-    boardID = BoardIds.SYNTHETIC_BOARD  # TODO-change to BoardIds.CYTON_DAISY_BOARD when running real experiments
-    # boardID = BoardIds.CYTON_DAISY_BOARD
+    config = Config(name='Michael', num_trials=30)
+    # boardID = BoardIds.SYNTHETIC_BOARD  # TODO-change to BoardIds.CYTON_DAISY_BOARD when running real experiments
+    boardID = BoardIds.CYTON_DAISY_BOARD
     session = OfflineSession(
         config=config,
         recorder=CytonRecorder(config, board_id=boardID),  # TODO: change when running without recording
@@ -38,5 +39,6 @@ if __name__ == '__main__':
         classifier=BaseClassifier(config),
         sgd_classifier=SGDClassifier(config)
     )
-    #concat_files()
-    session.run_all() #raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
+    session.run_recording()
+    # concat_files()
+    # session.run_all()  # raw_data_path=os.path.join(search_path, "data", "all_files.fif"))

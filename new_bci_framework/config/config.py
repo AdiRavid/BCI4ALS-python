@@ -17,12 +17,12 @@ class Config:
 
         # HEADSET:
         self.EMPTY_CHANNEL_PREF = 'X'
-        self.CHANNELS = ['C3', 'C4', 'CZ',
+        self.CHANNELS = ['C3', 'C4', 'Cz',
                          'FC1', 'FC2', 'FC5', 'FC6',
                          'CP1', 'CP2', 'CP5', 'CP6']
         self.NUM_EMPTY_CHANNELS = 16 - len(self.CHANNELS)
         self.CHANNELS += [f'{self.EMPTY_CHANNEL_PREF}{i}' for i in range(1, self.NUM_EMPTY_CHANNELS + 1)]
-        self.MONTAGE_FILENAME = r"C:\Users\ASUS\Documents\BCI4ALS-python-new\new_bci_framework\recorder\montage.loc"
+        self.MONTAGE_FILENAME = r"new_bci_framework/recorder/montage.loc"
 
 
         # PARADIGM:
@@ -35,7 +35,7 @@ class Config:
         # UI:
         self.PRE_CUE_LENGTH = 2
         self.PAUSE_LENGTH = 1
-        self.CUE_LENGTH = 3
+        self.CUE_LENGTH = 2
 
         self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
         self.PREDICTED_CLASSES_IMS = {val: f'ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
