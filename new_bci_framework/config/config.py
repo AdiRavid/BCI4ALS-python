@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Dict
 
 
+
 class Config:
     """
     class containing config information for a session.
@@ -25,6 +26,7 @@ class Config:
         self.CHANNELS += [f'{self.EMPTY_CHANNEL_PREF}{i}' for i in range(1, self.NUM_EMPTY_CHANNELS + 1)]
         self.MONTAGE_FILENAME = r"new_bci_framework/recorder/montage.loc"
 
+
         # PARADIGM:
         self.IDLE_LABEL = 'IDLE'
         self.CLASSES = ['LEFT', f'{self.IDLE_LABEL}', 'RIGHT']
@@ -39,6 +41,7 @@ class Config:
 
         self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
         self.PREDICTED_CLASSES_IMS = {val: f'ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
+
 
         # PREPROCESSING:
         self.SESSION_SAVE_DIR = '../..'

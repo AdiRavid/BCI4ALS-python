@@ -31,7 +31,7 @@ class CarRacer:
         gameIcon = pygame.image.load('carIcon.png')
         pygame.display.set_icon(gameIcon)
 
-        self.backgroundImage = pygame.image.load("supermarket1.jpeg")
+        self.backgroundImage = pygame.image.load("background.png")
         self.backgroundImage = pygame.transform.scale(self.backgroundImage, (800, 600))
         self.gameDisplay.blit(self.backgroundImage, (0, 0))
 

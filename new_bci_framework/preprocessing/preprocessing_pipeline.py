@@ -25,6 +25,7 @@ class PreprocessingPipeline:
 
     def __segment(self, data: mne.io.Raw) -> mne.Epochs:
         event_dict: Dict[str, int] = {v: k for k, v in self._config.TRIAL_LABELS.items()}
+        data = data.drop_channels('C3')
         events = mne.find_events(data, 'STIM')
 
         epochs = mne.Epochs(data,
@@ -64,8 +65,9 @@ class PreprocessingPipeline:
                        'spect_slope__fmin': highpass,
                        }
         self.epoched_data = extract_features(data, sfreq, selected_funcs, funcs_params=func_params)
-        self.epoched_labels = self.epochs.get_data('STIM')[:, :, 25]
-        np.reshape(self.epoched_labels, self.epoched_labels.shape[0])
+        self.epoched_labels = np.asarray(self.epochs.events[:,2])
+        self.epoched_labels = np.reshape(self.epoched_labels,(self.epoched_labels.shape[0],1))
+        # np.reshape(self.epoched_labels, self.epoched_labels.shape[0])
         return self.epoched_data, self.epoched_labels
 
     def __filter(self,  data: mne.io.Raw) -> None:

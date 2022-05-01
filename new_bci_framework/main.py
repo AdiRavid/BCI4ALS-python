@@ -42,7 +42,6 @@ if __name__ == '__main__':
         adaboost_classifier=adaboost_classifier(config)
 
     )
-    # session.run_recording()
+    session.run_recording()
     # concat_files()
-    session.run_all(
-        r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\all_data_up_to_may1_normed_no_CP6.fif")  # raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
+    # session.run_all()  # raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
