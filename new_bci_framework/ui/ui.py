@@ -105,11 +105,12 @@ class UI:
         time.sleep(self.config.PAUSE_LENGTH)
         self.display_message('Session is over, Thanks!', self.center)
         time.sleep(self.config.PAUSE_LENGTH)
+        pg.display.quit()
         pg.quit()
 
     @staticmethod
     def need_to_quit() -> bool:
         for event in pg.event.get():
-            if (event == KEYDOWN and event == K_ESCAPE) or event == QUIT:
+            if (event == KEYDOWN and event == K_ESCAPE) or event.type == QUIT:
                 return True
         return False

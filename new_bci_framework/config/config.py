@@ -16,10 +16,12 @@ class Config:
         self.DATE = datetime.now().strftime('%Y-%m-%d-%H-%M')
 
         # HEADSET:
+        self.GAIN_VALUE = 4
         self.EMPTY_CHANNEL_PREF = 'X'
         self.CHANNELS = ['C3', 'C4', 'Cz',
                          'FC1', 'FC2', 'FC5', 'FC6',
                          'CP1', 'CP2', 'CP5', 'CP6']
+        self.REAL_CHANNEL_INDXS = range(len(self.CHANNELS))
         self.NUM_EMPTY_CHANNELS = 16 - len(self.CHANNELS)
         self.CHANNELS += [f'{self.EMPTY_CHANNEL_PREF}{i}' for i in range(1, self.NUM_EMPTY_CHANNELS + 1)]
         self.MONTAGE_FILENAME = r"new_bci_framework/recorder/montage.loc"
@@ -28,7 +30,7 @@ class Config:
         # PARADIGM:
         self.IDLE_LABEL = 'IDLE'
         self.CLASSES = ['LEFT', f'{self.IDLE_LABEL}', 'RIGHT']
-        self.TRIAL_LABELS = {label: i for i, label in enumerate(self.CLASSES, start=1)}
+        self.TRIAL_LABELS: Dict[str, int] = {label: i for i, label in enumerate(self.CLASSES, start=1)}
 
         self.NUM_TRIALS_PER_CLASS = num_trials
 

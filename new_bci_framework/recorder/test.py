@@ -1,6 +1,6 @@
 from time import sleep
 
-from new_bci_framework.recorder.opeb_bci_cyton_recorder import *
+from new_bci_framework.recorder.open_bci_cyton_recorder import *
 from new_bci_framework.recorder.plot_rt_recording import Graph
 
 

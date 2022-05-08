@@ -3,7 +3,7 @@ from new_bci_framework.classifier.sgd_classifier import SGDClassifier
 
 from new_bci_framework.config.config import Config
 from new_bci_framework.session.offline_session import OfflineSession
-from new_bci_framework.recorder.opeb_bci_cyton_recorder import CytonRecorder, BoardIds
+from new_bci_framework.recorder.open_bci_cyton_recorder import CytonRecorder, BoardIds
 from new_bci_framework.paradigm.MI_paradigm import MIParadigm
 from new_bci_framework.ui.offline_ui import OfflineUI
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline

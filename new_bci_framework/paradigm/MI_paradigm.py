@@ -4,7 +4,8 @@ from new_bci_framework.ui.ui import UI
 from new_bci_framework.recorder.recorder import Recorder
 
 import numpy as np
-from time import sleep
+import pygame as pg
+from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 
 
 class MIParadigm(Paradigm):
@@ -27,10 +28,10 @@ class MIParadigm(Paradigm):
         self.ui.set_work(len(self.events))
 
         for i in range(self.work):
-            self.ui.set_curr_work(i)
-            self.ui.clear_screen()
             if self.ui.need_to_quit():
                 break
+            self.ui.set_curr_work(i)
+            self.ui.clear_screen()
             self.ui.display_event(recorder, self.events[i])
         self.ui.quit()
 

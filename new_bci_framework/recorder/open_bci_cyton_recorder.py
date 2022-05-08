@@ -28,10 +28,11 @@ class CytonRecorder(Recorder):
                  headset: str = "cyton"):
         super(CytonRecorder, self).__init__(config)
 
+        self._config = config
         # Board Id and Headset Name
         self.headset: str = headset
         self.board_id = board_id
-        self.channels = config.CHANNELS
+        self.channels = self._config.CHANNELS
         self.empty_channel_prefix = config.EMPTY_CHANNEL_PREF
         self.MONTAGE_FILENAME = config.MONTAGE_FILENAME
 
@@ -68,7 +69,7 @@ class CytonRecorder(Recorder):
         return self.__get_raw_data(self.ch_names)
 
     def plot_live_data(self, block=True) -> Union[None, threading.Thread]:
-        start_plot = lambda: Graph(self.board, self.__get_board_names(self.channels))
+        start_plot = lambda: Graph(self.board, self.__get_board_names(self.channels), self._config)
         if block:
             start_plot()
         else:
@@ -117,21 +118,30 @@ class CytonRecorder(Recorder):
         """Insert an encoded marker into EEG data"""
         self.board.insert_marker(marker)  # insert the marker to the stream
 
-    def __board_to_mne(self, board_data: NDArray, ch_names: List[str]) -> mne.io.RawArray:
+    def __board_to_mne(self, eeg_data: NDArray, stim: NDArray, ch_names: List[str]) -> mne.io.RawArray:
         """
         Convert the ndarray board data to mne object
-        :param board_data: raw ndarray from board
+        :param eeg_data: raw ndarray from board
         :return:
         """
-        board_data[:-1, :] = board_data[:-1, :] / 1000000  # BrainFlow returns uV, convert to V for MNE
+        eeg_data = eeg_data / 1000000  # BrainFlow returns uV, convert to V for MNE
+        if self.board_id == BoardIds.CYTON_DAISY_BOARD:
+            # rescale if gain value is not 24:
+            eeg_data *= (
+                        24 // self._config.GAIN_VALUE)
 
         # Creating MNE objects from BrainFlow data arrays
-        ch_types = ['eeg'] * len(ch_names) + ['stim']
-        info = mne.create_info(ch_names=ch_names + ['STIM'], sfreq=self.sfreq, ch_types=ch_types)
-
+        ch_types = ['eeg'] * len(ch_names)
+        info = mne.create_info(ch_names=ch_names, sfreq=self.sfreq, ch_types=ch_types)
         montage = mne.channels.make_standard_montage('biosemi64')
         info.set_montage(montage)
-        raw = mne.io.RawArray(board_data, info, verbose=False)
+        raw = mne.io.RawArray(eeg_data, info, verbose=False)
+
+        # Add marker channel:
+        marker_info = mne.create_info(ch_names=['stim'], sfreq=self.sfreq, ch_types=['stim'])
+        marker_raw = mne.io.RawArray([stim], marker_info)
+
+        raw.add_channels([marker_raw])
         return raw
 
     def __get_board_data(self) -> NDArray:
@@ -146,7 +156,7 @@ class CytonRecorder(Recorder):
         :return: mne_raw data
         """
         ch_names = [ch_name for ch_name in ch_names if not ch_name.startswith(self.empty_channel_prefix)]
-        indices = [self.ch_names.index(ch) for ch in ch_names] + \
-                  [self.board.get_marker_channel(self.board_id)]
+        indices = [self.ch_names.index(ch) + 1 for ch in ch_names]
+        stim = self.data[self.board.get_marker_channel(self.board_id)]
         data = self.data[indices]
-        return self.__board_to_mne(data, ch_names)
+        return self.__board_to_mne(data, stim, ch_names)
