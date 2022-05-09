@@ -19,7 +19,7 @@ def concat_files():
     raws = []
     for root, dir, files in os.walk(search_path):
         for file in files:
-            if file.endswith(".fif"):
+            if file.endswith(".fif") and 'Michael' in file:
                 file_full_path = os.path.join(root, file)
                 raws.append(read_raw_fif(file_full_path, preload=True))
 
@@ -44,4 +44,4 @@ if __name__ == '__main__':
     )
     session.run_recording()
     # concat_files()
-    # session.run_all()  # raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
+    session.run_all(raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
