@@ -1,4 +1,5 @@
 import mne
+import numpy as np
 from mne.preprocessing import ICA
 
 from new_bci_framework.config.config import Config

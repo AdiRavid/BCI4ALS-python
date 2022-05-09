@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Dict
 
 
-
 class Config:
     """
     class containing config information for a session.
@@ -10,7 +9,7 @@ class Config:
     directory names for saved data and figures, numbers of trials, train-test-split ratio, etc.
     """
 
-    def __init__(self, name='Synth', num_trials=1):
+    def __init__(self, name='Synth', num_trials=1, selected_feature_path=None):
         # GENERAL:
         self.SUBJECT_NAME = name
         self.DATE = datetime.now().strftime('%Y-%m-%d-%H-%M')
@@ -25,7 +24,6 @@ class Config:
         self.NUM_EMPTY_CHANNELS = 16 - len(self.CHANNELS)
         self.CHANNELS += [f'{self.EMPTY_CHANNEL_PREF}{i}' for i in range(1, self.NUM_EMPTY_CHANNELS + 1)]
         self.MONTAGE_FILENAME = r"new_bci_framework/recorder/montage.loc"
-
 
         # PARADIGM:
         self.IDLE_LABEL = 'IDLE'
@@ -42,7 +40,6 @@ class Config:
         self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
         self.PREDICTED_CLASSES_IMS = {val: f'ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
 
-
         # PREPROCESSING:
         self.SESSION_SAVE_DIR = '../..'
         self.HIGH_PASS_FILTER = 0.1
@@ -51,8 +48,11 @@ class Config:
 
         # SEGMENTATION
         # Set trial start and end times in seconds relative to stimulus (for example -0.2, 0.9)
-        self.TRIAL_START_TIME = -0.1
-        self.TRIAL_END_TIME = 0.5
+        self.TRIAL_START_TIME = -0.5  # -0.1
+        self.TRIAL_END_TIME = 2.5  # 0.5
+
+        # FEATRUE SELECTION:
+        self.SELECTED_FEATURES_PATH = selected_feature_path
 
         # CLASSIFICATION:
         self.NUM_OF_FEATURES = 15

@@ -29,7 +29,7 @@ for f in files:
                                                       '3.000000000000000': 3})
         stim = np.zeros_like(raw.get_data()[0])
         stim[events[:, 0]] = events[:, 2]
-        stim_info = mne.create_info(['STIM'], raw.info['sfreq'], ['stim'])
+        stim_info = mne.create_info(['STIM'], raw.info['sfreq'], ['STIM'])
         stim_raw = mne.io.RawArray(stim.reshape(1, -1), stim_info)
         raw.add_channels([stim_raw], force_update_info=True)
 

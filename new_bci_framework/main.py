@@ -8,6 +8,7 @@ from new_bci_framework.paradigm.MI_paradigm import MIParadigm
 from new_bci_framework.ui.offline_ui import OfflineUI
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.classifier.base_classifier import BaseClassifier
+from new_bci_framework.classifier.adaboost_classifier import adaboost_classifier
 import mne
 import os
 
@@ -27,9 +28,9 @@ def concat_files():
 
 
 if __name__ == '__main__':
-    config = Config(name='Michael', num_trials=30)
-    # boardID = BoardIds.SYNTHETIC_BOARD  # TODO-change to BoardIds.CYTON_DAISY_BOARD when running real experiments
-    boardID = BoardIds.CYTON_DAISY_BOARD
+    config = Config(name='Michael', num_trials=30)  # TODO- add selected_feature_path to use existing selected features.
+    boardID = BoardIds.SYNTHETIC_BOARD  # TODO-change to BoardIds.CYTON_DAISY_BOARD when running real experiments
+    # boardID = BoardIds.CYTON_DAISY_BOARD
     session = OfflineSession(
         config=config,
         recorder=CytonRecorder(config, board_id=boardID),  # TODO: change when running without recording
@@ -37,8 +38,11 @@ if __name__ == '__main__':
         paradigm=MIParadigm(config, OfflineUI(config)),
         preprocessor=PreprocessingPipeline(config),
         classifier=BaseClassifier(config),
-        sgd_classifier=SGDClassifier(config)
+        sgd_classifier=SGDClassifier(config),
+        adaboost_classifier=adaboost_classifier(config)
+
     )
-    session.run_recording()
+    # session.run_recording()
     # concat_files()
-    # session.run_all()  # raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
+    session.run_all(
+        r"C:\Users\ASUS\Documents\BCI4ALS-python-new\data\all_data_up_to_may1_normed_no_CP6.fif")  # raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
