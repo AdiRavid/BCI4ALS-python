@@ -27,8 +27,8 @@ class OfflineSession(Session):
 
     def __init__(self, config: Config, recorder: Recorder, paradigm: Paradigm,
                  preprocessor: PreprocessingPipeline,
-                 classifier: BaseClassifier, sgd_classifier: SGDClassifier,
-                 adaboost_classifier: adaboost_classifier):
+                 classifier: BaseClassifier = None, sgd_classifier: SGDClassifier = None,
+                 adaboost_classifier: adaboost_classifier = None):
         super().__init__(config, recorder, paradigm,
                          preprocessor, classifier, sgd_classifier, adaboost_classifier)
 
@@ -128,7 +128,7 @@ class OfflineSession(Session):
             self.raw_data = read_raw_fif(raw_data_path, preload=True)
         self.run_preprocessing()
         self.feature_selection()
-        # self.run_adaboost()
+        #self.run_adaboost()
         self.run_classifier()
-        # self.run_sgd_classifier()
-        # self.run_lazy_classifier()
+        #self.run_sgd_classifier()
+        #self.run_lazy_classifier()
