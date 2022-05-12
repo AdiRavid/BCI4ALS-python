@@ -22,15 +22,9 @@ for f in files:
     #raw.plot_psd()
 
     #####################################
-    # add stim for all python recordings
-    #####################################
-    if f.startswith('Michael_2022'):
-        raw.rename_channels(mapping)
-        raw.reorder_channels(np.concatenate([channels, np.array(['STIM'])]))
-    #####################################
     # Matlab fix
     #####################################
-    else:
+    if not f.startswith('Michael_2022'):
         raw.info['sfreq'] = 125
         events, _ = mne.events_from_annotations(raw, {'1.000000000000000': 1,
                                                       '2.000000000000000': 2,
@@ -44,12 +38,15 @@ for f in files:
     #####################################
     ## fixes for specific recording days
     #####################################
-    if "04-28-17" in f:
+    if "2022-04-28" in f:
+        raw.rename_channels(mapping)
+        raw.reorder_channels(np.concatenate([channels, np.array(['STIM'])]))
         raw.info['bads'] = ['CP6']
         raw.drop_channels(raw.info['bads'])
         raw.info.set_montage(montage)
 
-    if "05-08-11" in f:
+
+    if "2022-05-08" in f:
         raw.rename_channels({'stim': 'STIM'})
 
     #####################################
@@ -59,11 +56,17 @@ for f in files:
     raw._data[:-1] = L/np.linalg.norm(L)
     #raw._data[:-1] = zscore(L)
     #####################################
-    raw.plot_psd()
+
+    #raw.plot_psd()
 
     raws.append(raw)
-    raw.save(os.path.join(r'data', f.split('.')[0] + '_normed_no_cp6.fif'))
+    try:
+        raw.save(os.path.join(r'data', f.split('.')[0] + '_normed_no_cp6.fif'))
+        break
+    except FileExistsError:
+        continue
+
 
 print()
-raw = mne.concatenate_raws(raws)
-raw.save(os.path.join(r'data', 'all_data_up_to_may1_normed_no_CP6.fif'))
+#raw = mne.concatenate_raws(raws)
+#raw.save(os.path.join(r'data', 'all_data_12_05_22_normed.fif'))
