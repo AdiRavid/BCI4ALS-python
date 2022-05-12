@@ -1,6 +1,7 @@
 import pygame
 import time
 import random
+from threading import Thread
 
 black = (0, 0, 0)
 white = (255, 255, 255)
@@ -31,7 +32,7 @@ class CarRacer:
         gameIcon = pygame.image.load('carIcon.png')
         pygame.display.set_icon(gameIcon)
 
-        self.backgroundImage = pygame.image.load("background.png")
+        self.backgroundImage = pygame.image.load("supermarket2.jpg")
         self.backgroundImage = pygame.transform.scale(self.backgroundImage, (800, 600))
         self.gameDisplay.blit(self.backgroundImage, (0, 0))
 
@@ -71,7 +72,11 @@ class CarRacer:
         car8 = pygame.transform.scale(car8, (60, 100)) # resize graphic
         car8 = car8.convert_alpha() # remove whitespace from graphic
 
-        self.randomCars = [car1, car2, car3, car4, car5, car6, car7, car8]
+        cart = pygame.image.load("cart1.png")
+        cart = pygame.transform.scale(cart,(60,100))
+        cart = cart.convert_alpha()
+
+        self.randomCars = [cart]
         self.enemy = random.choice(self.randomCars)
 
         #brought to you by code-projects.org
@@ -87,7 +92,7 @@ class CarRacer:
         quit()
 
     def score(self, count):
-        font = pygame.font.SysFont("comicsansms", 25)
+        font = pygame.font.SysFont("courier", 25)
         text = font.render("SCORE: " + str(count), True, red)
         self.gameDisplay.blit(text, (0, 0))
 
@@ -100,19 +105,19 @@ class CarRacer:
         self.gameDisplay.blit(self.carImg, (x, y))
 
 
-    def text_objects(self, text, font):
-        textSurface = font.render(text, True, black)
+    def text_objects(self, text, font, color = black):
+        textSurface = font.render(text, True, color)
         return textSurface, textSurface.get_rect()
 
 
     def crash(self):
         ####################################
 
-        # pygame.mixer.Sound.play(self.crash_sound)
-        pygame.mixer.music.stop()
+        #pygame.mixer.Sound.play(self.crash_sound)
+        #pygame.mixer.music.stop()
         ####################################
-        largeText = pygame.font.SysFont("comicsansms", 115)
-        TextSurf, TextRect = self.text_objects("You Crashed", largeText)
+        largeText = pygame.font.SysFont("courier", 115)
+        TextSurf, TextRect = self.text_objects("You Lost!", largeText, red)
         TextRect.center = ((self.display_width / 2), (self.display_height / 2))
         self.gameDisplay.blit(TextSurf, TextRect)
 
@@ -122,7 +127,7 @@ class CarRacer:
                     pygame.quit()
                     quit()
 
-            self.button("Play Again", 150, 450, 100, 50, green, bright_green, self.game_loop)
+            self.button("Play Again", 150, 450, 130, 50, green, bright_green, self.game_loop)
             self.button("Quit", 550, 450, 100, 50, red, bright_red, self.quitgame)
 
             pygame.display.update()
@@ -139,7 +144,7 @@ class CarRacer:
                 action()
         else:
             pygame.draw.rect(self.gameDisplay, ic, (x, y, w, h))
-        smallText = pygame.font.SysFont("comicsansms", 20)
+        smallText = pygame.font.SysFont("courier", 20)
         textSurf, textRect = self.text_objects(msg, smallText)
         textRect.center = ((x + (w / 2)), (y + (h / 2)))
         self.gameDisplay.blit(textSurf, textRect)
@@ -152,15 +157,15 @@ class CarRacer:
 
     def unpause(self):
         global pause
-        pygame.mixer.music.unpause()
+        #pygame.mixer.music.unpause()
         pause = False
 
 
     def paused(self):
         ############
-        pygame.mixer.music.pause()
+        #pygame.mixer.music.pause()
         #############
-        largeText = pygame.font.SysFont("comicsansms", 115)
+        largeText = pygame.font.SysFont("courier", 115)
         TextSurf, TextRect = self.text_objects("Paused", largeText)
         TextRect.center = ((self.display_width / 2), (self.display_height / 2))
         self.gameDisplay.blit(TextSurf, TextRect)
@@ -189,17 +194,17 @@ class CarRacer:
                     quit()
 
             self.gameDisplay.fill(white)
-            largeText = pygame.font.SysFont("comicsansms", 115)
+            largeText = pygame.font.SysFont("courier", 115)
             TextSurf, TextRect = self.text_objects("Car Dodge", largeText)
             TextRect.center = ((self.display_width / 2), (self.display_height / 4))
             self.gameDisplay.blit(TextSurf, TextRect)
 
-            largeText = pygame.font.SysFont("comicsansms", 40)
+            largeText = pygame.font.SysFont("courier", 40)
             TextSurf, TextRect = self.text_objects("Think LEFT or RIGHT to move", largeText)
             TextRect.center = ((self.display_width / 2), (self.display_height / 2))
             self.gameDisplay.blit(TextSurf, TextRect)
 
-            self.button("LET PLAY!", 150, 450, 100, 50, green, bright_green, self.game_loop)
+            self.button("LET PLAY!", 150, 450, 130, 50, green, bright_green, self.game_loop)
             self.button("Quit", 550, 450, 100, 50, red, bright_red, self.quitgame)
 
             pygame.display.update()
@@ -211,9 +216,9 @@ class CarRacer:
         enemy = random.choice(self.randomCars)
         ############
 
-        pygame.mixer.music.load('bgmusic.mp3')
-        pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.2)
+        #pygame.mixer.music.load('bgmusic.mp3')
+        #pygame.mixer.music.play(-1)
+        #pygame.mixer.music.set_volume(0.2)
         ############
         x = (self.display_width * 0.45)
         y = (self.display_height * 0.8)
@@ -291,10 +296,13 @@ class CarRacer:
             pygame.display.update()
             self.clock.tick(60)
 
+    ## need to call them from a different thread
     def move_right(self):
         self.right_detected = True
 
     def move_left(self):
         self.left_detected = True
 
+
 c = CarRacer()
+
