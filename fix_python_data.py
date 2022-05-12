@@ -1,5 +1,6 @@
 import os, mne
 import numpy as np
+from scipy.stats import zscore
 
 matlab_annotations = {'LEFT': '1.000000000000000',
                       'RIGHT': '2.000000000000000',
@@ -17,6 +18,8 @@ montage = mne.channels.make_standard_montage('biosemi64')
 raws = []
 for f in files:
     raw = mne.io.read_raw_fif(os.path.join(r'data', f), preload=True)
+
+    raw.plot_psd()
 
     if f.startswith('Michael_2022'):
         raw.rename_channels(mapping)
@@ -37,8 +40,9 @@ for f in files:
     raw.drop_channels(raw.info['bads'])
     raw.info.set_montage(montage)
 
-    L = raw.get_data()
-    normed = (L - np.min(L)) / (np.max(L) - np.min(L))
+    L = raw.get_data()[:-1]
+    raw._data[:-1] = L/np.linalg.norm(L)
+    #raw._data[:-1] = zscore(L)
     raw.plot_psd()
 
     raws.append(raw)
