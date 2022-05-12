@@ -23,7 +23,7 @@ class PreprocessingPipeline:
         if not os.path.isdir(self._save_dir):
             os.mkdir(self._save_dir)
 
-    def __segment(self, data: mne.io.Raw) -> mne.Epochs:
+    def _segment(self, data: mne.io.Raw) -> mne.Epochs:
         event_dict: Dict[str, int] = {v: k for k, v in self._config.TRIAL_LABELS.items()}
         data = data.drop_channels('C3')
         events = mne.find_events(data, 'STIM')
@@ -43,7 +43,10 @@ class PreprocessingPipeline:
                      [8, 10.5],
                      [10, 15.5],
                      [17.5, 20.5],
-                     [12.5, 30]]
+                     [12.5, 30],
+                     [30,40],
+                     [40,49.9],
+                     [51.1,60]] #check which frequencies are relevant
 
         sfreq = raw_data.info['sfreq']
 
@@ -70,12 +73,17 @@ class PreprocessingPipeline:
         # np.reshape(self.epoched_labels, self.epoched_labels.shape[0])
         return self.epoched_data, self.epoched_labels
 
-    def __filter(self,  data: mne.io.Raw) -> None:
+    def _filter(self, data: mne.io.Raw) -> None:
+        ## 1. Lowpass highpass filter
         data.filter(l_freq=self._config.LOW_PASS_FILTER, h_freq=self._config.HIGH_PASS_FILTER)
+        ## 2. Notch filter
         if self._config.NOTCH_FILTER:
             data.notch_filter(self._config.NOTCH_FILTER)
 
+        ## 3. laplacian
+
+
     def run_pipeline(self, data: mne.io.Raw) -> mne.Epochs:
-        self.__filter(data)
-        self.__segment(data)
+        self._filter(data)
+        self._segment(data)
         return self.__feature_extraction(data)
