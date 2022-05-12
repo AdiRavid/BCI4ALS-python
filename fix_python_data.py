@@ -19,12 +19,17 @@ raws = []
 for f in files:
     raw = mne.io.read_raw_fif(os.path.join(r'data', f), preload=True)
 
-    raw.plot_psd()
+    #raw.plot_psd()
 
+    #####################################
+    # add stim for all python recordings
+    #####################################
     if f.startswith('Michael_2022'):
         raw.rename_channels(mapping)
         raw.reorder_channels(np.concatenate([channels, np.array(['STIM'])]))
-
+    #####################################
+    # Matlab fix
+    #####################################
     else:
         raw.info['sfreq'] = 125
         events, _ = mne.events_from_annotations(raw, {'1.000000000000000': 1,
@@ -36,13 +41,24 @@ for f in files:
         stim_raw = mne.io.RawArray(stim.reshape(1, -1), stim_info)
         raw.add_channels([stim_raw], force_update_info=True)
 
-    raw.info['bads'] = ['CP6']
-    raw.drop_channels(raw.info['bads'])
-    raw.info.set_montage(montage)
+    #####################################
+    ## fixes for specific recording days
+    #####################################
+    if "04-28-17" in f:
+        raw.info['bads'] = ['CP6']
+        raw.drop_channels(raw.info['bads'])
+        raw.info.set_montage(montage)
 
+    if "05-08-11" in f:
+        raw.rename_channels({'stim': 'STIM'})
+
+    #####################################
+    # normalization
+    #####################################
     L = raw.get_data()[:-1]
     raw._data[:-1] = L/np.linalg.norm(L)
     #raw._data[:-1] = zscore(L)
+    #####################################
     raw.plot_psd()
 
     raws.append(raw)
