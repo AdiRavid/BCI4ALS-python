@@ -29,8 +29,8 @@ def concat_files():
 
 if __name__ == '__main__':
     config = Config(name='Michael', num_trials=30)  # TODO- add selected_feature_path to use existing selected features.
-    boardID = BoardIds.SYNTHETIC_BOARD  # TODO-change to BoardIds.CYTON_DAISY_BOARD when running real experiments
-    # boardID = BoardIds.CYTON_DAISY_BOARD
+    # boardID = BoardIds.SYNTHETIC_BOARD  # TODO-change to BoardIds.CYTON_DAISY_BOARD when running real experiments
+    boardID = BoardIds.CYTON_DAISY_BOARD
     session = OfflineSession(
         config=config,
         recorder=CytonRecorder(config, board_id=boardID),  # TODO: change when running without recording
@@ -44,4 +44,4 @@ if __name__ == '__main__':
     )
     session.run_recording()
     # concat_files()
-    session.run_all(raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
+    # session.run_all(raw_data_path=os.path.join(search_path, "data", "all_files.fif"))

@@ -138,7 +138,7 @@ class CytonRecorder(Recorder):
         raw = mne.io.RawArray(eeg_data, info, verbose=False)
 
         # Add marker channel:
-        marker_info = mne.create_info(ch_names=['STIM'], sfreq=self.sfreq, ch_types=['STIM'])
+        marker_info = mne.create_info(ch_names=['stim'], sfreq=self.sfreq, ch_types=['stim'])
         marker_raw = mne.io.RawArray([stim], marker_info)
 
         raw.add_channels([marker_raw])

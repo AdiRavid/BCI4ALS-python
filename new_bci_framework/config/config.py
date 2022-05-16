@@ -39,8 +39,8 @@ class Config:
         self.PAUSE_LENGTH = 1
         self.CUE_LENGTH = 2
 
-        self.CLASSES_IMS = {val: f'new_bci_framework/ui/resources/{val.lower()}.png' for val in self.CLASSES}
-        self.PREDICTED_CLASSES_IMS = {val: f'new_bci_framework/ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
+        self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
+        self.PREDICTED_CLASSES_IMS = {val: f'ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
 
 
         # PREPROCESSING:
