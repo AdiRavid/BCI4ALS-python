@@ -25,7 +25,7 @@ class PreprocessingPipeline:
 
     def _segment(self, data: mne.io.Raw) -> mne.Epochs:
         event_dict: Dict[str, int] = {v: k for k, v in self._config.TRIAL_LABELS.items()}
-        events = mne.find_events(data, 'STIM')
+        events = mne.find_events(data)
 
         epochs = mne.Epochs(data,
                             events,

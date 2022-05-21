@@ -3,7 +3,7 @@ import pickle
 from new_bci_framework.classifier.sgd_classifier import SGDClassifier
 from new_bci_framework.session.session import Session
 from new_bci_framework.recorder.recorder import Recorder
-from new_bci_framework.classifier.base_classifier import BaseClassifier
+from new_bci_framework.classifier.xgb_classifier import XGBClassifier
 from new_bci_framework.classifier.adaboost_classifier import adaboost_classifier
 
 from new_bci_framework.paradigm.paradigm import Paradigm
@@ -27,7 +27,7 @@ class OfflineSession(Session):
 
     def __init__(self, config: Config, recorder: Recorder, paradigm: Paradigm,
                  preprocessor: PreprocessingPipeline,
-                 classifier: BaseClassifier = None, sgd_classifier: SGDClassifier = None,
+                 classifier: XGBClassifier = None, sgd_classifier: SGDClassifier = None,
                  adaboost_classifier: adaboost_classifier = None):
         super().__init__(config, recorder, paradigm,
                          preprocessor, classifier, sgd_classifier, adaboost_classifier)

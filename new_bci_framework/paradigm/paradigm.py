@@ -1,5 +1,8 @@
 from ..recorder.recorder import Recorder
 from ..config.config import Config
+from ..classifier.base_classifier import BaseClassifier
+
+from typing import Optional
 
 
 class Paradigm:
@@ -15,6 +18,6 @@ class Paradigm:
     def __init__(self, config: Config):
         self.config = config
 
-    def start(self, recorder: Recorder):
+    def start(self, recorder: Recorder, classifier: BaseClassifier):
         raise NotImplementedError
 

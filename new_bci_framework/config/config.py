@@ -10,9 +10,9 @@ class Config:
     directory names for saved data and figures, numbers of trials, train-test-split ratio, etc.
     """
 
-    def __init__(self, name='Synth', num_trials=1, selected_feature_path=None):
+    def __init__(self, num_trials=1, synth=False, selected_feature_path=None):
         # GENERAL:
-        self.SUBJECT_NAME = name
+        self.SUBJECT_NAME = 'Synth' if synth else 'Subject'
         self.DATE = datetime.now().strftime('%Y-%m-%d-%H-%M')
 
         # HEADSET:
@@ -39,8 +39,8 @@ class Config:
         self.PAUSE_LENGTH = 1
         self.CUE_LENGTH = 2
 
-        self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
-        self.PREDICTED_CLASSES_IMS = {val: f'ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
+        self.CLASSES_IMS = {val: f'new_bci_framework/ui/resources/{val.lower()}.png' for val in self.CLASSES}
+        self.PREDICTED_CLASSES_IMS = {val: f'new_bci_framework/ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
 
 
         # PREPROCESSING:
