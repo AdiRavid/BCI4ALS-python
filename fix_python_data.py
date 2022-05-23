@@ -48,18 +48,19 @@ for f in files:
 
     if "2022-05-08" in f:
         raw.rename_channels({'stim': 'STIM'})
+        raws.append(raw)
 
     #####################################
     # normalization
     #####################################
     L = raw.get_data()[:-1]
     raw._data[:-1] = L/np.linalg.norm(L)
+    raw.get_data()[:-1] *= 10 ^(-6)
     #raw._data[:-1] = zscore(L)
     #####################################
 
     #raw.plot_psd()
 
-    raws.append(raw)
     try:
         raw.save(os.path.join(r'data', f.split('.')[0] + '_normed_no_cp6.fif'))
         break
@@ -68,5 +69,5 @@ for f in files:
 
 
 print()
-#raw = mne.concatenate_raws(raws)
-#raw.save(os.path.join(r'data', 'all_data_12_05_22_normed.fif'))
+raw = mne.concatenate_raws(raws)
+raw.save(os.path.join(r'data', 'all_data_08_05_22_normed.fif'))
