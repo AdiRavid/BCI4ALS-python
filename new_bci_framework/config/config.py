@@ -45,8 +45,8 @@ class Config:
 
         # PREPROCESSING:
         self.SESSION_SAVE_DIR = '../..'
-        self.HIGH_PASS_FILTER = 0.1
-        self.LOW_PASS_FILTER = 60
+        self.HIGH_PASS_FILTER = 1
+        self.LOW_PASS_FILTER = 45
         self.NOTCH_FILTER = 50
 
         # SEGMENTATION
