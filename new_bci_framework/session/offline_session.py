@@ -1,5 +1,6 @@
 import pickle
 
+from os import path
 from new_bci_framework.classifier.sgd_classifier import SGDClassifier
 from new_bci_framework.session.session import Session
 from new_bci_framework.recorder.recorder import Recorder
@@ -10,7 +11,7 @@ from new_bci_framework.paradigm.paradigm import Paradigm
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.config.config import Config
 import numpy as np
-import pickle as pkl
+
 import new_bci_framework.classifier.optuna_runner as op
 
 
@@ -60,6 +61,8 @@ class OfflineSession(Session):
             current_features_idxes = selector.get_support(indices=True)
             self.data_in_features = selector.fit_transform(X, y)
             pickle.dump(current_features_idxes, open("feature_selection", 'wb'))
+            # also save as txt for debug
+            np.savetxt(path.join("preprocessing", self.filename + "_selected_features.txt"), current_features_idxes, delimiter='\n',  fmt='%s')
         else:
             current_features_idxes = pickle.load(open(self.config.SELECTED_FEATURES_PATH, 'rb'))
             self.data_in_features = X[:, current_features_idxes]
@@ -94,7 +97,7 @@ class OfflineSession(Session):
         labels = self.epoched_labels  # .ravel()
         all_data = np.concatenate((labels, self.data_in_features), axis=1)
         train_data, test_data = train_test_split(all_data)
-        # op.run_optuna(train_data[:, 1:], train_data[:, 0])
+        #op.run_optuna(train_data[:, 1:], train_data[:, 0])
 
         self.adaboost_classifier.fit(train_data)
         self.adaboost_classifier.evaluate(test_data)
@@ -126,6 +129,8 @@ class OfflineSession(Session):
             self.raw_data = self.recorder.get_raw_data()
         else:
             self.raw_data = read_raw_fif(raw_data_path, preload=True)
+
+        self.filename = self.raw_data.filenames[0].split('/')[-1].split('.')[0]
         self.run_preprocessing()
         self.feature_selection()
         #self.run_adaboost()

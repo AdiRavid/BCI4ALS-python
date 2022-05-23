@@ -27,6 +27,7 @@ class Session:
         self.epoched_data = None
         self.epoched_labels = None
         self.data_in_features = None
+        self.filename = ""
         self.sgd_classifier = sgd_classifier
         self.adaboost_classifier = adaboost_classifier
 
