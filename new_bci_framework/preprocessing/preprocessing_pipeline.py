@@ -3,6 +3,7 @@ from typing import Dict
 
 import mne
 import numpy as np
+import pandas
 
 from ..config.config import Config
 from mne_features.feature_extraction import extract_features
@@ -44,8 +45,7 @@ class PreprocessingPipeline:
                      [17.5, 20.5],
                      [12.5, 30],
                      [30,40],
-                     [40,49.9],
-                     [51.1,60]] #check which frequencies are relevant
+                     [40,45]] #check which frequencies are relevant
 
         sfreq = raw_data.info['sfreq']
 
@@ -55,9 +55,10 @@ class PreprocessingPipeline:
         data_channels = self.epochs.ch_names[0:-1] #remove 'STIM' channel
         data = self.epochs.get_data(data_channels)
 
-        # todo: try other funcs
+        # feature documentation:
+        # https://mne.tools/mne-features/api.html
         selected_funcs = {'pow_freq_bands', 'rms',
-                          #'spect_edge_freq', #todo: debug fail when using this func
+                          'spect_edge_freq',
                           'spect_entropy',
                           'spect_slope',
                           'mean', 'variance', 'std', 'skewness', 'ptp_amp',
@@ -66,7 +67,13 @@ class PreprocessingPipeline:
                        'spect_slope__fmax': lowpass,
                        'spect_slope__fmin': highpass,
                        }
-        self.epoched_data = extract_features(data, sfreq, selected_funcs, funcs_params=func_params)
+        features_df = extract_features(data, sfreq, selected_funcs, funcs_params=func_params, return_as_df=True)
+        self.epoched_data = features_df.to_numpy()
+
+        # save features list
+        filename = raw_data.filenames[0].split('/')[-1].split('.')[0]
+        features_df.to_excel(os.path.join("preprocessing", filename + "_" + "all_features.xlsx"))
+
         self.epoched_labels = np.asarray(self.epochs.events[:,2])
         self.epoched_labels = np.reshape(self.epoched_labels,(self.epoched_labels.shape[0],1))
         # np.reshape(self.epoched_labels, self.epoched_labels.shape[0])
@@ -80,6 +87,7 @@ class PreprocessingPipeline:
             data.notch_filter(self._config.NOTCH_FILTER)
 
         ## 3. laplacian
+        data = mne.preprocessing.compute_current_source_density(data)
 
 
     def run_pipeline(self, data: mne.io.Raw) -> mne.Epochs:
