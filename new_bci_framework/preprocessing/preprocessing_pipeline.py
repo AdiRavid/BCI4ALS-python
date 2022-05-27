@@ -81,7 +81,7 @@ class PreprocessingPipeline:
 
     def _filter(self, data: mne.io.Raw) -> None:
         ## 1. Lowpass highpass filter
-        data.filter(l_freq=self._config.LOW_PASS_FILTER, h_freq=self._config.HIGH_PASS_FILTER)
+        data.filter(l_freq=self._config.HIGH_PASS_FILTER, h_freq=self._config.LOW_PASS_FILTER)
         ## 2. Notch filter
         if self._config.NOTCH_FILTER:
             data.notch_filter(self._config.NOTCH_FILTER)
