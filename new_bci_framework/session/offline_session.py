@@ -1,5 +1,5 @@
 import pickle
-
+import xgboost as xgb
 from os import path
 from new_bci_framework.classifier.sgd_classifier import SGDClassifier
 from new_bci_framework.session.session import Session
@@ -57,9 +57,8 @@ class OfflineSession(Session):
         y = self.epoched_labels.ravel()
         if not self.config.SELECTED_FEATURES_PATH:
             selector = SelectKBest(score_func=mutual_info_classif, k=num_of_features)
-            selector.fit(X, y)
-            current_features_idxes = selector.get_support(indices=True)
             self.data_in_features = selector.fit_transform(X, y)
+            current_features_idxes = selector.get_support(indices=True)
             pickle.dump(current_features_idxes, open("feature_selection", 'wb'))
             # also save as txt for debug
             np.savetxt(path.join("preprocessing", self.filename + "_selected_features.txt"), current_features_idxes, delimiter='\n',  fmt='%s')
@@ -85,9 +84,10 @@ class OfflineSession(Session):
         # test_file = open('test_file.pkl', 'wb')
         # pkl.dump(test_data, test_file)
 
-        # op.run_optuna(train_data[:, 1:], train_data[:, 0])
+        best_params = op.run_optuna(train_data[:, 1:], train_data[:, 0])
 
         if self.config.NEW_MODEL:
+            self.classifier._model = xgb.XGBClassifier(best_params)
             self.classifier.fit(train_data)
         else:
             self.classifier.update(train_data)
