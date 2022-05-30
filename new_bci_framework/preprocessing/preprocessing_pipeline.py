@@ -8,6 +8,7 @@ import pandas
 from ..config.config import Config
 from mne_features.feature_extraction import extract_features
 from new_bci_framework.config.config import Config
+from autoreject import AutoReject
 
 
 class PreprocessingPipeline:
@@ -34,7 +35,8 @@ class PreprocessingPipeline:
                             tmax=self._config.TRIAL_END_TIME,
                             event_id=self._config.TRIAL_LABELS,
                             verbose='INFO',
-                            on_missing='warn')
+                            on_missing='warn', preload=True)
+        epochs.drop_channels('stim')
         self.epochs = epochs
         return epochs
 
@@ -72,7 +74,7 @@ class PreprocessingPipeline:
 
         # save features list
         filename = raw_data.filenames[0].split('/')[-1].split('.')[0]
-        features_df.to_excel(os.path.join("preprocessing", filename + "_" + "all_features.xlsx"))
+        features_df.to_excel(os.path.join("new_bci_framework","preprocessing", filename + "_" + "all_features.xlsx"))
 
         self.epoched_labels = np.asarray(self.epochs.events[:,2])
         self.epoched_labels = np.reshape(self.epoched_labels,(self.epoched_labels.shape[0],1))
@@ -89,7 +91,14 @@ class PreprocessingPipeline:
         ## 3. laplacian
         data = mne.preprocessing.compute_current_source_density(data)
 
+    #rejects bad epochs according to the algorithm: https://autoreject.github.io/stable/explanation.html
+    def _reject(self, data: mne.io.Raw):
+        ar = AutoReject()
+        epochs_clean, rejection_log = ar.fit_transform(self.epochs, True)
+        self.epochs = epochs_clean
+
     def run_pipeline(self, data: mne.io.Raw) -> Tuple[np.ndarray, np.ndarray]:
         self._filter(data)
         self._segment(data)
+        self._reject(data)
         return self.__feature_extraction(data)
