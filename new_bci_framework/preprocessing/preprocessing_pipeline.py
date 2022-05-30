@@ -91,7 +91,7 @@ class PreprocessingPipeline:
         ## 3. laplacian
         data = mne.preprocessing.compute_current_source_density(data)
 
-    #rejects bad epochs
+    #rejects bad epochs according to the algorithm: https://autoreject.github.io/stable/explanation.html
     def _reject(self, data: mne.io.Raw):
         ar = AutoReject()
         epochs_clean, rejection_log = ar.fit_transform(self.epochs, True)
