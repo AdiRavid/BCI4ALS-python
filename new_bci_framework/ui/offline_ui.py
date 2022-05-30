@@ -9,8 +9,6 @@ import numpy as np
 import pygame as pg
 from time import sleep
 
-from typing import Dict
-
 
 ########################################################################################################################
 #                                                     Constants                                                        #
@@ -38,41 +36,27 @@ class OfflineUI(UI):
 
     def setup(self):
         pg.display.set_caption('Offline Session')
-        pg.init()
+        super(OfflineUI, self).setup()
 
-        self.screen = pg.display.set_mode((self.screen_width, self.screen_height))
-
-        self.screen.fill(self.bg_color)
-        self.display_message('Hello, training session will start soon', self.center)
+        self.display_message('Hello, training session will start soon', loc=self.center)
         sleep(self.config.PAUSE_LENGTH * 2)
 
         self.screen.fill(self.bg_color)
-        self.display_message('Starting now', self.center)
+        self.display_message('Starting now', loc=self.center)
 
-    def display_event(self, recorder: Recorder, label: str):
+    def display_event(self, recorder: Recorder, label: str, surface: pg.Surface) -> None:
         sleep(self.config.PAUSE_LENGTH)
+        super().display_event(recorder, label, surface)
 
-        self.display_message(msg=f'READY? Think {label}')
-        self.display_image(self.images[label])
-        sleep(self.config.PRE_CUE_LENGTH)
-
-        recorder.push_marker(self.config.TRIAL_LABELS[label])
-
-        self.clear_screen()
-        self.display_image(self.images[label])
-        sleep(self.config.CUE_LENGTH)
-        self.clear_screen()
-
-    def clear_screen(self):
-        self.screen.fill(self.bg_color)
+    def clear_surface(self, surface: pg.Surface):
         self.update_progress_bar()
-        pg.display.flip()
+        super(OfflineUI, self).clear_surface(surface)
 
     def quit(self):
         self.set_curr_work(self.work)
-        self.clear_screen()
+        self.clear_surface(self.screen)
         sleep(self.config.PAUSE_LENGTH)
-        self.display_message('Session is over, Thanks!', self.center)
+        self.display_message('Session is over, Thanks!', loc=self.center)
         sleep(self.config.PAUSE_LENGTH)
         super(OfflineUI, self).quit()
 

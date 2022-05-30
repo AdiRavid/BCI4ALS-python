@@ -12,9 +12,14 @@ class BaseClassifier:
     def __init__(self, config: Config):
         self._config = config
 
-
     def fit(self, data: np.ndarray):
-        pass
+        raise NotImplementedError
 
     def predict(self, data: np.ndarray):
-        pass
+        raise NotImplementedError
+
+    def update(self):
+        raise NotImplementedError
+
+    def evaluate(self):
+        raise NotImplementedError

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from new_bci_framework.paradigm.paradigm import Paradigm
 from new_bci_framework.config.config import Config
 from new_bci_framework.ui.ui import UI
@@ -30,11 +28,12 @@ class MIFeedbackParadigm(Paradigm):
         for i in range(self.work):
             if self.ui.need_to_quit():
                 break
-            self.ui.clear_screen()
-            self.ui.display_event(recorder, self.events[i])
+            self.ui.clear_surface(self.ui.msg_surface)
+            self.ui.display_event(recorder, self.events[i], self.ui.msg_surface)
             d = recorder.get_raw_data()
             pred = classifier.predict(d)
         self.ui.quit()
+        pass
 
     def __get_event_list(self):
         events = np.hstack([np.full(self.num_trials_per_class, key) for key in self.trial_labels.keys()])

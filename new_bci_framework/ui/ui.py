@@ -6,13 +6,13 @@ import numpy as np
 from new_bci_framework.config.config import Config
 from new_bci_framework.recorder.recorder import Recorder
 
-import time
+from time import sleep
 import pygame as pg
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 
 from typing import Tuple, Optional, Dict
 
-
+BLACK = (0, 0, 0)
 ########################################################################################################################
 #                                                   Implementation                                                     #
 ########################################################################################################################
@@ -28,6 +28,8 @@ class UI:
         self.img_loc = self.center
         self.screen = None
 
+        self.msg_surface = pg.Surface((self.screen_width - 100, self.screen_height - 100))
+
         # colors:
         self.bg_color = (248, 240, 227)
 
@@ -41,16 +43,35 @@ class UI:
         self.images: Dict[str, pg.image] = {}
 
     def setup(self):
-        raise NotImplemented
+        pg.init()
+        self.screen = pg.display.set_mode((self.screen_width, self.screen_height))
+        self.screen.fill(self.bg_color)
 
-    def display_event(self, recorder: Recorder, label: str) -> None:
-        raise NotImplemented
+    def display_event(self, recorder: Recorder, label: str, surface: pg.Surface) -> None:
 
-    def display_message(self, msg: str, loc: Optional[Tuple[float, float]] = None):
-        text = self.font.render(msg, True, 'black')
-        loc = self.msg_loc if loc is None else loc
-        text_rect = text.get_rect(center=loc)
+        self.display_message(msg=f'READY? Think {label}')
+        self.display_image(self.images[label])
+        sleep(self.config.PRE_CUE_LENGTH)
+
+        recorder.push_marker(self.config.TRIAL_LABELS[label])
+
+        self.clear_surface(surface)
+        self.display_image(self.images[label])
+        sleep(self.config.CUE_LENGTH)
+        self.clear_surface(surface)
+
+    def ready(self, label: str):
+        self.display_message(msg=f'READY? Think {label}')
+        self.display_image(self.images[label])
+        sleep(self.config.PRE_CUE_LENGTH)
+
+    def display_message(self, msg: str, size: int = 50, loc: Optional[Tuple[float, float]] = None, color=BLACK):
+        font = pg.font.SysFont(name='Roboto', size=size)
+
+        text = font.render(msg, True, color)
+        text_rect = text.get_rect(center=self.msg_loc if loc is None else loc)
         self.screen.blit(text, text_rect)
+
         pg.display.flip()
 
     def display_image(self, image: pg.image):
@@ -58,8 +79,10 @@ class UI:
         self.screen.blit(image, image_rect)
         pg.display.flip()
 
-    def clear_screen(self):
-        raise NotImplemented
+    def clear_surface(self, surface: pg.Surface):
+        surface.fill(self.bg_color)
+        self.screen.blit(surface, (50, 50))
+        pg.display.flip()
 
     def quit(self):
         pg.display.quit()

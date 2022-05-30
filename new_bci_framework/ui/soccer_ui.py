@@ -9,11 +9,15 @@ if path_to_root not in sys.path:
 os.chdir(path_to_root)
 
 import pygame as pg
+from copy import copy
 from time import sleep
 
 from new_bci_framework.ui.ui import UI
 from new_bci_framework.config.config import Config
 from new_bci_framework.recorder.recorder import Recorder
+
+BLUE = (28, 26, 175)
+RED = (212, 7, 15)
 
 
 class SoccerUI(UI):
@@ -24,65 +28,79 @@ class SoccerUI(UI):
         self.field = pg.transform.scale(self.field, (self.screen_width, self.screen_height))
 
         self.goalie = pg.image.load('new_bci_framework/ui/resources/soccer_player.png')
-        self.goalie = pg.transform.scale(self.goalie, (80, 80))
-        self.goalie_center = (self.screen_width / 2 - 35, self.screen_height / 11)
+        goalie_size = 80
+        self.goalie = pg.transform.scale(self.goalie, (goalie_size, goalie_size))
+        self.goalie_center = (self.screen_width / 2 - goalie_size / 2, self.screen_height / 11 - goalie_size / 2)
+        self.goalie_loc = self.goalie_center
+
+        goalie_right = [3 * self.screen_width / 4 - goalie_size / 2, self.screen_height / 11 - goalie_size / 2]
+        goalie_left = (self.screen_width / 4 - goalie_size / 2, self.screen_height / 11 - goalie_size / 2)
+        self.goalie_positions = {'LEFT': goalie_left, 'RIGHT': goalie_right, 'IDLE': self.goalie_center}
 
         self.ball = pg.image.load('new_bci_framework/ui/resources/soccer_ball.png')
-        self.ball = pg.transform.scale(self.ball, (50, 50))
-        self.ball_center = (self.screen_width / 2 - 30, 10 * self.screen_height / 11)
+        ball_size = 50
+        self.ball = pg.transform.scale(self.ball, (ball_size, ball_size))
+        self.ball_center = [self.screen_width / 2 - ball_size / 2, 10 * self.screen_height / 11 - ball_size / 2]
+        self.ball_loc = copy(self.ball_center)
 
         self.add_images(config.CLASSES_IMS)
         self.msg_loc = self.screen_width / 2, self.screen_height / 3
         self.img_loc = self.screen_width / 2, 4 * self.screen_height / 7
 
-        self.right_detected = False
-        self.left_detected = False
+        self.directions = {'LEFT': -1, 'RIGHT': 1, 'IDLE': 1}
 
     def setup(self):
-        pg.init()
-        self.screen = pg.display.set_mode((self.screen_width, self.screen_height))
-
+        super(SoccerUI, self).setup()
         self.intro()
-        sleep(self.config.PAUSE_LENGTH * 2)
-
-        self.screen.blit(self.field, (0, 0))
-        self.screen.blit(self.goalie, self.goalie_center)
-        self.screen.blit(self.ball, self.ball_center)
-
         pg.display.update()
 
     def intro(self):
         self.screen.fill(self.bg_color)
-        largeText = pg.font.SysFont("courier", 100)
-        TextSurf, TextRect = self.text_objects("Penalty Kick", largeText)
-        TextRect.center = ((self.screen_width / 2), (self.screen_height / 4))
-        self.screen.blit(TextSurf, TextRect)
-        largeText = pg.font.SysFont("courier", 40)
-        TextSurf, TextRect = self.text_objects("Think LEFT or RIGHT to block", largeText)
-        TextRect.center = ((self.screen_width / 2), (self.screen_height / 2))
-        self.screen.blit(TextSurf, TextRect)
+
+        self.display_message('Penalty Kick', 100, ((self.screen_width / 2), (self.screen_height / 4)))
+        self.display_message('Think LEFT or RIGHT to block', 40, ((self.screen_width / 2), (self.screen_height / 2)))
+
+        sleep(self.config.PAUSE_LENGTH * 2)
+
+    def display_game(self):
+        self.screen.blit(self.field, (0, 0))
+        self.screen.blit(self.goalie, self.goalie_loc)
+        self.screen.blit(self.ball, self.ball_loc)
         pg.display.update()
 
-    def display_event(self, recorder: Recorder, label: str) -> None:
-        sleep(self.config.PAUSE_LENGTH)
+    def display_event(self, recorder: Recorder, label: str, surface: pg.Surface) -> None:
+        self.clear_surface(self.msg_surface)
+        super(SoccerUI, self).display_event(recorder, label, surface)
 
-        self.display_message(msg=f'READY? Think {label}')
-        self.display_image(self.images[label])
-        sleep(self.config.PRE_CUE_LENGTH)
+    def display_prediction(self, label, prediction):
+        self.move_goalie(prediction)
+        self.draw_kick(label)
+        prefix, color = ("True", BLUE) if label == prediction else ("False", RED)
+        self.display_message(f'{prefix} prediction - {prediction}', color=color)
+        sleep(self.config.PAUSE_LENGTH * 2)
 
-        recorder.push_marker(self.config.TRIAL_LABELS[label])
+    def reset_game(self):
+        self.goalie_loc = self.goalie_center
+        self.ball_loc = copy(self.ball_center)
+        self.display_game()
 
-        self.clear_screen()
-        self.display_image(self.images[label])
-        sleep(self.config.CUE_LENGTH)
-        self.clear_screen()
+    def move_goalie(self, prediction):
+        self.goalie_loc = self.goalie_positions[prediction]
+        self.display_game()
 
-    def clear_screen(self):
-        pass
+    def draw_kick(self, label):
+        x_goalie, y_goalie = self.goalie_positions[label]
+        x_ball, y_ball = self.ball_center
 
-    def text_objects(self, text, font, color='black'):
-        textSurface = font.render(text, True, color)
-        return textSurface, textSurface.get_rect()
+        dx, dy = x_goalie - x_ball, y_ball - y_goalie
+        iters = 25
+        for _ in range(iters):
+            self.move_ball(label, dx / iters, dy / iters)
+            self.display_game()
+
+    def move_ball(self, direction: str, dx, dy):
+        self.ball_loc[0] += self.directions[direction] * dx
+        self.ball_loc[1] -= self.directions[direction] * dy
 
 
 if __name__ == '__main__':
@@ -90,5 +108,11 @@ if __name__ == '__main__':
     config = Config()
     ui = SoccerUI(config)
     ui.setup()
-    ui.display_event(Recorder(config), 'RIGHT')
+    ui.display_game()
+    sleep(2)
+    l, p = 'RIGHT', 'RIGHT'
+    ui.display_event(Recorder(config), l, ui.msg_surface)
+    ui.display_prediction(l, p)
+    ui.reset_game()
+    sleep(2)
     ui.quit()

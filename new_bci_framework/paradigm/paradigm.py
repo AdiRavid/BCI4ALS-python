@@ -14,10 +14,9 @@ class Paradigm:
     Sublcasses may represent different paradigms such as p300, MI, etc.
     """
 
-
     def __init__(self, config: Config):
         self.config = config
 
-    def start(self, recorder: Recorder, classifier: BaseClassifier):
+    def get_events(self):
         raise NotImplementedError
 
