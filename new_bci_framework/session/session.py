@@ -1,13 +1,13 @@
-from new_bci_framework.classifier.sgd_classifier import SGDClassifier
 from new_bci_framework.config.config import Config
 from new_bci_framework.recorder.recorder import Recorder
 from new_bci_framework.ui.ui import UI
 from new_bci_framework.paradigm.paradigm import Paradigm
-from new_bci_framework.classifier.base_classifier import BaseClassifier
-from new_bci_framework.classifier.adaboost_classifier import adaboost_classifier
-
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
+from new_bci_framework.classifier.base_classifier import BaseClassifier
 
+import numpy as np
+import pickle
+from os import path
 
 class Session:
     """
@@ -25,13 +25,43 @@ class Session:
         self.preprocessor = preprocessor
         self.classifier = classifier
         self.raw_data = None
-        self.epoched_data = None
-        self.epoched_labels = None
+        self.processed_data = None
+        self.labels = None
         self.data_in_features = None
         self.filename = ""
+        self.save = True
 
-    def run_all(self, raw_data_path=''):
-        pass
+    def run_recording(self):
+        self.recorder.start_recording()
+        self.recorder.plot_live_data()
+        self.run_paradigm()
+        self.recorder.end_recording()
+
+        if self.save:
+            self.raw_data = self.recorder.get_raw_data()
+            self.raw_data.save(f'new_bci_framework/../data/{self.config.SUBJECT_NAME}_{self.config.DATE}_raw.fif')
+
+    def run_paradigm(self):
+        raise NotImplementedError
+
+    def run_preprocessing(self):
+        self.processed_data, self.labels = self.preprocessor.run_pipeline(self.raw_data)
+
+    def run_classifier(self):
+        raise NotImplementedError
+
+    # if given raw_data it will do the pipeline on it
+    # if no data were given it will evoke the recorder
+    def run_all(self, raw_data=None):
+        if not raw_data:
+            self.run_recording()
+            self.raw_data = self.recorder.get_raw_data()
+        else:
+            self.raw_data = raw_data
+
+        self.filename = self.raw_data.filenames[0].split('/')[-1].split('.')[0]
+        self.run_preprocessing()
+        self.run_classifier()
 
     @staticmethod
     def load_session(session_dir: str):

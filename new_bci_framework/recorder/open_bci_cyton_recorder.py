@@ -54,6 +54,8 @@ class CytonRecorder(Recorder):
         self.ch_names = self.__get_board_names(self.channels)
         self.data = None
 
+        self.buffer_size = self.board.get_board_data_count()
+
     def start_recording(self):
         super().start_recording()
         self.__on()
@@ -64,6 +66,12 @@ class CytonRecorder(Recorder):
     def end_recording(self):
         super().end_recording()
         self.__off()
+
+    def get_partial_raw_data(self) -> RawArray:
+        buffer_size = self.board.get_board_data_count()
+        self.data = self.board.get_current_board_data(buffer_size - self.buffer_size)
+        self.buffer_size = buffer_size
+        return self.__get_raw_data(self.ch_names)
 
     def get_raw_data(self) -> RawArray:
         return self.__get_raw_data(self.ch_names)

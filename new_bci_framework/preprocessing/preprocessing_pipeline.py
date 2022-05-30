@@ -1,5 +1,5 @@
 import os
-from typing import Dict
+from typing import Dict, Tuple
 
 import mne
 import numpy as np
@@ -89,8 +89,7 @@ class PreprocessingPipeline:
         ## 3. laplacian
         data = mne.preprocessing.compute_current_source_density(data)
 
-
-    def run_pipeline(self, data: mne.io.Raw) -> mne.Epochs:
+    def run_pipeline(self, data: mne.io.Raw) -> Tuple[np.ndarray, np.ndarray]:
         self._filter(data)
         self._segment(data)
         return self.__feature_extraction(data)

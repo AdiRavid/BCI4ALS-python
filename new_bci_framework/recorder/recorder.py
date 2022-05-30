@@ -28,6 +28,9 @@ class Recorder:
     def get_raw_data(self) -> mne.io.Raw:
         pass
 
+    def get_partial_raw_data(self) -> mne.io.Raw:
+        pass
+
     def plot_live_data(self, block=True) -> Union[None, Thread]:
         """
         Plot the data being captured in real time.
