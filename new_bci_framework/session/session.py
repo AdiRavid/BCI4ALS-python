@@ -28,6 +28,7 @@ class Session:
         self.epoched_data = None
         self.epoched_labels = None
         self.data_in_features = None
+        self.filename = ""
 
     def run_all(self, raw_data_path=''):
         pass

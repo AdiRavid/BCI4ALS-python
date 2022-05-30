@@ -94,3 +94,4 @@ def run_optuna(X,y):
     #To start the optimization, we create a study object and pass the objective function to method
     study_xgb.optimize(objective_xgb, n_trials=100)
     print("best params are: ",study_xgb.best_params)
+    return study_xgb.best_params

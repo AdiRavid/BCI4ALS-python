@@ -39,14 +39,14 @@ class Config:
         self.PAUSE_LENGTH = 1
         self.CUE_LENGTH = 2
 
-        self.CLASSES_IMS = {val: f'new_bci_framework/ui/resources/{val.lower()}.png' for val in self.CLASSES}
-        self.PREDICTED_CLASSES_IMS = {val: f'new_bci_framework/ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
+        self.CLASSES_IMS = {val: f'ui/resources/{val.lower()}.png' for val in self.CLASSES}
+        self.PREDICTED_CLASSES_IMS = {val: f'ui/resources/{val.lower()}_pred.png' for val in self.CLASSES}
 
 
         # PREPROCESSING:
         self.SESSION_SAVE_DIR = '../..'
-        self.HIGH_PASS_FILTER = 0.1
-        self.LOW_PASS_FILTER = 60
+        self.HIGH_PASS_FILTER = 1
+        self.LOW_PASS_FILTER = 45
         self.NOTCH_FILTER = 50
 
         # SEGMENTATION
