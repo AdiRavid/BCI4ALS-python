@@ -1,5 +1,12 @@
 import os
 import sys
+import random
+
+from new_bci_framework.classifier.ensemble_2_classes_classifier import Ensemble2ClassesClassifier
+from new_bci_framework.classifier.ensemble_classifier import EnsembleClassifier
+from new_bci_framework.classifier.knn_ensemble_classifier import KnnEnsembleClassifier
+from new_bci_framework.classifier.sgd_classifier import SgdClassifier
+from new_bci_framework.classifier.xgb_classifier import XGBClassifier
 
 full_path = os.path.abspath(__file__)
 src_index = full_path.rfind('new_bci_framework')
@@ -19,7 +26,19 @@ from new_bci_framework.classifier.base_classifier import BaseClassifier
 import mne
 from mne.io import read_raw_fif
 
-search_path = os.path.join(os.getcwd(), "..")
+search_path = os.path.join(os.getcwd(), "..", "data", "Sivan")
+
+
+def run_pipeline_for_directory(path, session):
+    files = (list(filter(lambda f: f.endswith(".fif"), os.listdir(os.path.join(os.getcwd(), path)))))
+    random.shuffle(files)
+    for idx, file in enumerate(files):
+        print(f"<--- Start process file {idx}: {file} --->")
+        if idx == (len(files) - 1):
+            session.run_all_without_classifier(
+                raw_data_path=os.path.join(os.getcwd(), path, file))
+        else:
+            session.run_all(raw_data_path=os.path.join(os.getcwd(), path, file))
 
 
 def concat_files():
@@ -31,7 +50,7 @@ def concat_files():
                 raws.append(read_raw_fif(file_full_path, preload=True))
 
     concated_raw = mne.concatenate_raws(raws)
-    concated_raw.save(os.path.join(search_path, "data", "all_files.fif"))
+    concated_raw.save(os.path.join(search_path, "data", "Sivan", "all_files.fif"))
 
 
 if __name__ == '__main__':
@@ -45,8 +64,9 @@ if __name__ == '__main__':
         ui=OfflineUI(config),
         paradigm=MIParadigm(config),
         preprocessor=PreprocessingPipeline(config),
-        classifier=BaseClassifier(config)
+        classifier=EnsembleClassifier(config)
     )
-    session.run_recording()
+    # session.run_recording()
     # concat_files()
     # session.run_all(raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
+    run_pipeline_for_directory(path=r"data\Sivan", session=session)
