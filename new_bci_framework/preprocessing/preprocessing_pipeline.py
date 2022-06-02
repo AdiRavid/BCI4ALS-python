@@ -36,6 +36,17 @@ class PreprocessingPipeline:
                             verbose='INFO', baseline=(None, None),
                             on_missing='warn', preload=True)
         epochs.drop_channels('stim')
+
+        L = data.get_data()[:-1]
+        data._data[:-1] = L / np.linalg.norm(L)
+
+        normed_epochs = mne.Epochs(data,
+                            events,
+                            tmin=self._config.TRIAL_START_TIME,
+                            tmax=self._config.TRIAL_END_TIME,
+                            event_id=self._config.TRIAL_LABELS,
+                            verbose='INFO', baseline=(None, None),
+                            on_missing='warn', preload=True)
         self.epochs = epochs
         return epochs
 
