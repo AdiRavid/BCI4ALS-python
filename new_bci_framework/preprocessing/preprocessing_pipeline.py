@@ -26,7 +26,6 @@ class PreprocessingPipeline:
             os.mkdir(self._save_dir)
 
     def _segment(self, data: mne.io.Raw) -> mne.Epochs:
-        event_dict: Dict[str, int] = {v: k for k, v in self._config.TRIAL_LABELS.items()}
         events = mne.find_events(data)
 
         epochs = mne.Epochs(data,
@@ -34,7 +33,7 @@ class PreprocessingPipeline:
                             tmin=self._config.TRIAL_START_TIME,
                             tmax=self._config.TRIAL_END_TIME,
                             event_id=self._config.TRIAL_LABELS,
-                            verbose='INFO',
+                            verbose='INFO', baseline=(None, None),
                             on_missing='warn', preload=True)
         epochs.drop_channels('stim')
         self.epochs = epochs
@@ -81,24 +80,27 @@ class PreprocessingPipeline:
         # np.reshape(self.epoched_labels, self.epoched_labels.shape[0])
         return self.epoched_data, self.epoched_labels
 
-    def _filter(self, data: mne.io.Raw) -> None:
+    def _filter(self, data: mne.io.Raw) -> mne.io.Raw:
         ## 1. Lowpass highpass filter
-        data.filter(l_freq=self._config.HIGH_PASS_FILTER, h_freq=self._config.LOW_PASS_FILTER)
+        data.filter(l_freq=self._config.HIGH_PASS_FILTER, h_freq=self._config.LOW_PASS_FILTER,
+                    h_trans_bandwidth=(self._config.LOW_PASS_FILTER/4), l_trans_bandwidth=self._config.HIGH_PASS_FILTER)
         ## 2. Notch filter
         if self._config.NOTCH_FILTER:
             data.notch_filter(self._config.NOTCH_FILTER)
 
         ## 3. laplacian
         data = mne.preprocessing.compute_current_source_density(data)
+        return data
 
     #rejects bad epochs according to the algorithm: https://autoreject.github.io/stable/explanation.html
-    def _reject(self, data: mne.io.Raw):
+    def _reject(self) -> mne.Epochs:
         ar = AutoReject()
         epochs_clean, rejection_log = ar.fit_transform(self.epochs, True)
         self.epochs = epochs_clean
+        return  epochs_clean
 
     def run_pipeline(self, data: mne.io.Raw) -> Tuple[np.ndarray, np.ndarray]:
-        self._filter(data)
+        data = self._filter(data)
         self._segment(data)
-        self._reject(data)
+        self._reject()
         return self.__feature_extraction(data)
