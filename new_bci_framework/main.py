@@ -1,5 +1,5 @@
 import os
-import sys
+from sys import path as sys_path
 import random
 
 from new_bci_framework.classifier.ensemble_classifier import EnsembleClassifier
@@ -8,8 +8,8 @@ from new_bci_framework.classifier.ensemble_classifier import EnsembleClassifier
 full_path = os.path.abspath(__file__)
 src_index = full_path.rfind('new_bci_framework')
 path_to_root = full_path[: src_index]
-if path_to_root not in sys.path:
-    sys.path.append(path_to_root)
+if path_to_root not in sys_path:
+    sys_path.append(path_to_root)
 os.chdir(path_to_root)
 
 from new_bci_framework.config.config import Config
@@ -22,7 +22,7 @@ from new_bci_framework.preprocessing.preprocessing_pipeline import Preprocessing
 import mne
 from mne.io import read_raw_fif
 
-search_path = os.path.join(os.getcwd(), "..", "data", "Sivan")
+search_path = os.path.join(os.getcwd(), "data", "Sivan")
 
 
 def run_pipeline_for_directory(path, session):
@@ -64,5 +64,5 @@ if __name__ == '__main__':
     )
     # session.run_recording()
     # concat_files()
-    session.run_all(raw_data_path=os.path.join(search_path, "data", "Sivan_2022-05-29-12-16_raw.fif"))
+    session.run_all(raw_data_path=os.path.join("data", "Sivan_2022-05-29-12-16_raw.fif"))
     #run_pipeline_for_directory(path=r"data\Sivan", session=session)
