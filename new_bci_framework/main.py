@@ -2,11 +2,8 @@ import os
 import sys
 import random
 
-from new_bci_framework.classifier.ensemble_2_classes_classifier import Ensemble2ClassesClassifier
 from new_bci_framework.classifier.ensemble_classifier import EnsembleClassifier
-from new_bci_framework.classifier.knn_ensemble_classifier import KnnEnsembleClassifier
-from new_bci_framework.classifier.sgd_classifier import SgdClassifier
-from new_bci_framework.classifier.xgb_classifier import XGBClassifier
+
 
 full_path = os.path.abspath(__file__)
 src_index = full_path.rfind('new_bci_framework')
@@ -21,7 +18,6 @@ from new_bci_framework.recorder.open_bci_cyton_recorder import CytonRecorder, Bo
 from new_bci_framework.ui.offline_ui import OfflineUI
 from new_bci_framework.paradigm.MI_paradigm import MIParadigm
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
-from new_bci_framework.classifier.base_classifier import BaseClassifier
 
 import mne
 from mne.io import read_raw_fif
@@ -68,5 +64,5 @@ if __name__ == '__main__':
     )
     # session.run_recording()
     # concat_files()
-    # session.run_all(raw_data_path=os.path.join(search_path, "data", "all_files.fif"))
-    run_pipeline_for_directory(path=r"data\Sivan", session=session)
+    session.run_all(raw_data_path=os.path.join(search_path, "data", "Sivan_2022-05-29-12-16_raw.fif"))
+    #run_pipeline_for_directory(path=r"data\Sivan", session=session)
