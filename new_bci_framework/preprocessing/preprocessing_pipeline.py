@@ -34,9 +34,21 @@ class PreprocessingPipeline:
                             tmin=self._config.TRIAL_START_TIME,
                             tmax=self._config.TRIAL_END_TIME,
                             event_id=self._config.TRIAL_LABELS,
-                            verbose='INFO',
+                            verbose='INFO', baseline=(None, None),
                             on_missing='warn', preload=True)
         epochs.drop_channels('stim')
+
+        L = data.get_data()[:-1]
+        data._data[:-1] = L / np.linalg.norm(L)
+
+        normed_epochs = mne.Epochs(data,
+                            events,
+                            tmin=self._config.TRIAL_START_TIME,
+                            tmax=self._config.TRIAL_END_TIME,
+                            event_id=self._config.TRIAL_LABELS,
+                            verbose='INFO', baseline=(None, None),
+                            on_missing='warn', preload=True)
+        self.epochs = epochs
         return epochs
 
     def __feature_extraction(self):
@@ -79,11 +91,9 @@ class PreprocessingPipeline:
     def _filter(self, raw: mne.io.Raw) -> mne.io.Raw:
         # 1. Lowpass highpass filter
         raw.filter(l_freq=self._config.HIGH_PASS_FILTER, h_freq=self._config.LOW_PASS_FILTER)
-
         # 2. Notch filter
         if self._config.NOTCH_FILTER:
             raw.notch_filter(self._config.NOTCH_FILTER)
-
         # 3. laplacian
         raw_csd = mne.preprocessing.compute_current_source_density(raw)
         return raw_csd
@@ -93,7 +103,7 @@ class PreprocessingPipeline:
         rejects bad epochs according to the algorithm: https://autoreject.github.io/stable/explanation.html
         """
         ar = AutoReject()
-        epochs_clean, rejection_log = ar.fit_transform(self.epochs, True)
+        epochs_clean, _ = ar.fit_transform(self.epochs, True)
         self.epochs = epochs_clean
 
     def run_pipeline(self, data: mne.io.Raw) -> Tuple[np.ndarray, np.ndarray]:

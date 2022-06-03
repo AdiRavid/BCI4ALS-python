@@ -1,3 +1,5 @@
+from mne.io import read_raw_fif
+
 from new_bci_framework.session.session import Session
 from new_bci_framework.config.config import Config
 from new_bci_framework.recorder.recorder import Recorder
@@ -39,8 +41,35 @@ class OfflineSession(Session):
             X_train, X_test, y_train, y_test = train_test_split(self.processed_data, self.labels)
         else:
             X_train, y_train = self.processed_data, self.labels
-
         self.classifier.fit(X_train, y_train)
 
+    def run_evaluation(self):
+        X_test, y_test = self.processed_data, self.labels
+        self.classifier.evaluate(X_test, y_test)
 
+    def run_all_without_classifier(self, raw_data_path=''):
+        if not raw_data_path:
+            self.run_recording()
+            self.raw_data = self.recorder.get_raw_data()
+        else:
+            self.raw_data = read_raw_fif(raw_data_path, preload=True)
 
+        self.filename = self.raw_data.filenames[0].split('/')[-1].split('.')[0]
+        self.run_preprocessing()
+        # self.feature_selection()
+        self.run_evaluation()
+
+    # if given raw_data it will do the pipeline on it
+    # if no data were given it will evoke the recorder
+
+    def run_all(self, raw_data_path=''):
+        if not raw_data_path:
+            self.run_recording()
+            self.raw_data = self.recorder.get_raw_data()
+        else:
+            self.raw_data = read_raw_fif(raw_data_path, preload=True)
+
+        self.filename = self.raw_data.filenames[0].split('/')[-1].split('.')[0]
+        self.run_preprocessing()
+        # self.feature_selection()
+        self.run_classifier(split=False)  # TODO: change split

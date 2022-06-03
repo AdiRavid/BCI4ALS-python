@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.metrics import classification_report
 import pickle
 from os import path
 
@@ -38,4 +39,20 @@ class BaseClassifier:
         raise NotImplementedError
 
     def evaluate(self, X: np.ndarray, y: np.ndarray):
+        # transform is called in predict
+        # X = self.selector.transform(X)
+        self.save_classifier()
+        prediction = self.predict(X)
+        print("----------------------- EVALUATION --------------------------")
+        print(classification_report(y, prediction))
+        print("----------------------- prediction --------------------------")
+        print(prediction)
+
+        print("----------------------- true --------------------------")
+        print(y.T)
+
+    def save_classifier(self):
+        raise NotImplementedError
+
+    def load_classifier(self):
         raise NotImplementedError
