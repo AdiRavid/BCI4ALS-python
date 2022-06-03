@@ -5,9 +5,6 @@ from new_bci_framework.paradigm.paradigm import Paradigm
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.classifier.base_classifier import BaseClassifier
 
-import numpy as np
-import pickle
-from os import path
 
 class Session:
     """
@@ -50,16 +47,14 @@ class Session:
     def run_classifier(self):
         raise NotImplementedError
 
-    # if given raw_data it will do the pipeline on it
-    # if no data were given it will evoke the recorder
     def run_all(self, raw_data=None):
-        if not raw_data:
+        if not raw_data:  # if no data given, evoke the recorder
             self.run_recording()
             self.raw_data = self.recorder.get_raw_data()
-        else:
+        else:  # if raw_data is given, skip recording
             self.raw_data = raw_data
 
-        self.filename = self.raw_data.filenames[0].split('/')[-1].split('.')[0]
+        # self.filename = self.raw_data.filenames[0].split('/')[-1].split('.')[0]
         self.run_preprocessing()
         self.run_classifier()
 

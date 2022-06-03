@@ -10,11 +10,13 @@ os.chdir(path_to_root)
 
 from new_bci_framework.config.config import Config
 from new_bci_framework.session.offline_session import OfflineSession
+from new_bci_framework.session.feedback_session import FeedbackSession
 from new_bci_framework.recorder.open_bci_cyton_recorder import CytonRecorder, BoardIds
 from new_bci_framework.ui.offline_ui import OfflineUI
+from new_bci_framework.ui.soccer_ui import SoccerUI
 from new_bci_framework.paradigm.MI_paradigm import MIParadigm
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
-from new_bci_framework.classifier.base_classifier import BaseClassifier
+from new_bci_framework.classifier.dummy_classifier import DummyClassifier
 
 import mne
 from mne.io import read_raw_fif
@@ -39,13 +41,13 @@ if __name__ == '__main__':
 
     config = Config(num_trials=30, synth=synth)  # TODO- add selected_feature_path to use existing selected features.
     boardID = BoardIds.SYNTHETIC_BOARD if synth else BoardIds.CYTON_DAISY_BOARD
-    session = OfflineSession(
+    session = FeedbackSession(
         config=config,
         recorder=CytonRecorder(config, board_id=boardID),
-        ui=OfflineUI(config),
+        ui=SoccerUI(config),
         paradigm=MIParadigm(config),
         preprocessor=PreprocessingPipeline(config),
-        classifier=BaseClassifier(config)
+        classifier=DummyClassifier(config)
     )
     session.run_recording()
     # concat_files()

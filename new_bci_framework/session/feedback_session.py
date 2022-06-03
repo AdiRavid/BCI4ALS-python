@@ -26,7 +26,8 @@ class FeedbackSession(Session):
             self.ui.clear_surface(self.ui.msg_surface)
             self.ui.display_event(self.recorder, events[i], self.ui.msg_surface)
             self.run_all()
-            self.classifier.predict()
+            for t, p in zip(self.labels, self.classifier.predict(self.processed_data)):
+                self.ui.display_prediction(t, p)
 
         self.ui.quit()
 

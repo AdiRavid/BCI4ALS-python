@@ -29,16 +29,13 @@ class BaseClassifier:
                    indices, delimiter='\n', fmt='%s')
 
     def fit(self, X: np.ndarray, y: np.ndarray):
-        X = self.feature_selection(X, y)
         raise NotImplementedError
 
     def predict(self, X: np.ndarray):
-        X = self.selector.transform(X)
         raise NotImplementedError
 
     def update(self, X: np.ndarray, y: np.ndarray):
         raise NotImplementedError
 
     def evaluate(self, X: np.ndarray, y: np.ndarray):
-        X = self.selector.transform(X)
         raise NotImplementedError

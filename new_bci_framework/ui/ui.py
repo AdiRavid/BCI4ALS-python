@@ -98,6 +98,9 @@ class UI:
         images = {label: pg.image.load(img) for label, img in images.items()}
         self.images = {**self.images, **images}
 
+    def display_prediction(self, label, prediction):
+        raise NotImplementedError
+
     @staticmethod
     def need_to_quit() -> bool:
         for event in pg.event.get():

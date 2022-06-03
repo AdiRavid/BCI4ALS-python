@@ -54,7 +54,7 @@ class CytonRecorder(Recorder):
         self.ch_names = self.__get_board_names(self.channels)
         self.data = None
 
-        self.buffer_size = self.board.get_board_data_count()
+        self.buffer_size = 0
 
     def start_recording(self):
         super().start_recording()

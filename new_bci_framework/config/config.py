@@ -31,6 +31,7 @@ class Config:
         self.IDLE_LABEL = 'IDLE'
         self.CLASSES = ['LEFT', f'{self.IDLE_LABEL}', 'RIGHT']
         self.TRIAL_LABELS: Dict[str, int] = {label: i for i, label in enumerate(self.CLASSES, start=1)}
+        self.MARKERS2LABELS: Dict[str, int] = {i: label for i, label in enumerate(self.CLASSES, start=1)}
 
         self.NUM_TRIALS_PER_CLASS = num_trials
 

@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 full_path = os.path.abspath(__file__)
 src_index = full_path.rfind('new_bci_framework')
 path_to_root = full_path[: src_index]
@@ -11,6 +12,7 @@ os.chdir(path_to_root)
 import pygame as pg
 from copy import copy
 from time import sleep
+from typing import Dict
 
 from new_bci_framework.ui.ui import UI
 from new_bci_framework.config.config import Config
@@ -35,7 +37,9 @@ class SoccerUI(UI):
 
         goalie_right = [3 * self.screen_width / 4 - goalie_size / 2, self.screen_height / 11 - goalie_size / 2]
         goalie_left = (self.screen_width / 4 - goalie_size / 2, self.screen_height / 11 - goalie_size / 2)
-        self.goalie_positions = {'LEFT': goalie_left, 'RIGHT': goalie_right, 'IDLE': self.goalie_center}
+        self.goalie_positions = {'LEFT': goalie_left,
+                                 'RIGHT': goalie_right,
+                                 'IDLE': self.goalie_center}
 
         self.ball = pg.image.load('new_bci_framework/ui/resources/soccer_ball.png')
         ball_size = 50
@@ -47,7 +51,7 @@ class SoccerUI(UI):
         self.msg_loc = self.screen_width / 2, self.screen_height / 3
         self.img_loc = self.screen_width / 2, 4 * self.screen_height / 7
 
-        self.directions = {'LEFT': -1, 'RIGHT': 1, 'IDLE': 1}
+        self.directions: Dict[int: int] = {'LEFT': -1, 'RIGHT': 1, 'IDLE': 1}
 
     def setup(self):
         super(SoccerUI, self).setup()
@@ -69,15 +73,25 @@ class SoccerUI(UI):
         pg.display.update()
 
     def display_event(self, recorder: Recorder, label: str, surface: pg.Surface) -> None:
+        self.display_game()
+        sleep(self.config.PAUSE_LENGTH / 2)
         self.clear_surface(self.msg_surface)
+        sleep(self.config.PAUSE_LENGTH / 2)
         super(SoccerUI, self).display_event(recorder, label, surface)
+        self.clear_surface(self.msg_surface)
+        self.display_message('Processing')
+        sleep(self.config.TRIAL_END_TIME)
+        self.clear_surface(self.msg_surface)
 
-    def display_prediction(self, label, prediction):
+    def display_prediction(self, true_marker, pred_marker):
+        label = self.config.MARKERS2LABELS[true_marker]
+        prediction = self.config.MARKERS2LABELS[pred_marker]
         self.move_goalie(prediction)
         self.draw_kick(label)
         prefix, color = ("True", BLUE) if label == prediction else ("False", RED)
         self.display_message(f'{prefix} prediction - {prediction}', color=color)
         sleep(self.config.PAUSE_LENGTH * 2)
+        self.reset_game()
 
     def reset_game(self):
         self.goalie_loc = self.goalie_center
@@ -92,15 +106,15 @@ class SoccerUI(UI):
         x_goalie, y_goalie = self.goalie_positions[label]
         x_ball, y_ball = self.ball_center
 
-        dx, dy = x_goalie - x_ball, y_ball - y_goalie
-        iters = 25
+        dx, dy = x_goalie - x_ball, y_goalie - y_ball
+        iters = 50
         for _ in range(iters):
-            self.move_ball(label, dx / iters, dy / iters)
+            self.move_ball(dx / iters, dy / iters)
             self.display_game()
 
-    def move_ball(self, direction: str, dx, dy):
-        self.ball_loc[0] += self.directions[direction] * dx
-        self.ball_loc[1] -= self.directions[direction] * dy
+    def move_ball(self, dx, dy):
+        self.ball_loc[0] += dx
+        self.ball_loc[1] += dy
 
 
 if __name__ == '__main__':
