@@ -15,7 +15,8 @@ class FeedbackSession(Session):
         super().__init__(config, recorder, ui, paradigm, preprocessor, classifier)
 
     def run_paradigm(self):
-        events = self.paradigm.get_events()
+        # events = self.paradigm.get_events()
+        events = ['RIGHT', 'IDLE', 'LEFT', 'LEFT']
         work = len(events)
 
         self.ui.setup()

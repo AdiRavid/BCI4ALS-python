@@ -26,30 +26,46 @@ class PreprocessingPipeline:
 
         self.epochs: Optional[mne.Epochs] = None
 
-    def _segment(self, data: mne.io.Raw) -> mne.Epochs:
-        events = mne.find_events(data)
+    def _filter(self, raw: mne.io.Raw) -> Tuple[mne.io.Raw, np.ndarray]:
+        events = mne.find_events(raw)
+        raw = raw.drop_channels('stim')
 
-        epochs = mne.Epochs(data,
+        # 1. Lowpass highpass filter
+        raw = raw.filter(l_freq=self._config.HIGH_PASS_FILTER, h_freq=self._config.LOW_PASS_FILTER, picks='eeg')
+        # 2. Notch filter
+        if self._config.NOTCH_FILTER:
+            raw = raw.notch_filter(self._config.NOTCH_FILTER, picks='eeg')
+        return raw, events
+
+    def _segment(self, raw: mne.io.Raw, events: np.ndarray) -> mne.Epochs:
+        epochs = mne.Epochs(raw,
                             events,
                             tmin=self._config.TRIAL_START_TIME,
                             tmax=self._config.TRIAL_END_TIME,
                             event_id=self._config.TRIAL_LABELS,
                             verbose='INFO', baseline=(None, None),
                             on_missing='warn', preload=True)
-        epochs.drop_channels('stim')
 
-        L = data.get_data()[:-1]
-        data._data[:-1] = L / np.linalg.norm(L)
+        L = raw.get_data()[:-1]
+        raw._data[:-1] = L / np.linalg.norm(L)
 
-        normed_epochs = mne.Epochs(data,
-                            events,
-                            tmin=self._config.TRIAL_START_TIME,
-                            tmax=self._config.TRIAL_END_TIME,
-                            event_id=self._config.TRIAL_LABELS,
-                            verbose='INFO', baseline=(None, None),
-                            on_missing='warn', preload=True)
+        normed_epochs = mne.Epochs(raw,
+                                   events,
+                                   tmin=self._config.TRIAL_START_TIME,
+                                   tmax=self._config.TRIAL_END_TIME,
+                                   event_id=self._config.TRIAL_LABELS,
+                                   verbose='INFO', baseline=(None, None),
+                                   on_missing='warn', preload=True)
         self.epochs = epochs
         return epochs
+
+    def _reject(self):
+        """
+        rejects bad epochs according to the algorithm: https://autoreject.github.io/stable/explanation.html
+        """
+        ar = AutoReject()
+        epochs_clean, rejection_log = ar.fit_transform(self.epochs, True)
+        self.epochs = epochs_clean
 
     def __feature_extraction(self):
         highpass = self._config.HIGH_PASS_FILTER
@@ -88,27 +104,11 @@ class PreprocessingPipeline:
         self.labels = np.asarray(self.epochs.events[:, 2])
         return self.processed_data, self.labels
 
-    def _filter(self, raw: mne.io.Raw) -> mne.io.Raw:
-        # 1. Lowpass highpass filter
-        raw.filter(l_freq=self._config.HIGH_PASS_FILTER, h_freq=self._config.LOW_PASS_FILTER)
-        # 2. Notch filter
-        if self._config.NOTCH_FILTER:
-            raw.notch_filter(self._config.NOTCH_FILTER)
-        # 3. laplacian
-        raw_csd = mne.preprocessing.compute_current_source_density(raw)
-        return raw_csd
-
-    def _reject(self):
-        """
-        rejects bad epochs according to the algorithm: https://autoreject.github.io/stable/explanation.html
-        """
-        ar = AutoReject()
-        epochs_clean, _ = ar.fit_transform(self.epochs, True)
-        self.epochs = epochs_clean
-
-    def run_pipeline(self, data: mne.io.Raw) -> Tuple[np.ndarray, np.ndarray]:
-        data = self._filter(data)
-        self.epochs = self._segment(data)
+    def run_pipeline(self, raw: mne.io.Raw) -> Tuple[np.ndarray, np.ndarray]:
+        raw, events = self._filter(raw)
+        self.epochs = self._segment(raw, events)
         if len(self.epochs) > 1:
             self._reject()
+        # Laplacian:
+        self.epochs = mne.preprocessing.compute_current_source_density(self.epochs)
         return self.__feature_extraction()

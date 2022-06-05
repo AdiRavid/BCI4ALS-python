@@ -14,7 +14,7 @@ from copy import copy
 from time import sleep
 from typing import Dict
 
-from new_bci_framework.ui.ui import UI
+from new_bci_framework.ui.ui import UI, BLACK
 from new_bci_framework.config.config import Config
 from new_bci_framework.recorder.recorder import Recorder
 
@@ -60,11 +60,27 @@ class SoccerUI(UI):
 
     def intro(self):
         self.screen.fill(self.bg_color)
-
         self.display_message('Penalty Kick', 100, ((self.screen_width / 2), (self.screen_height / 4)))
-        self.display_message('Think LEFT or RIGHT to block', 40, ((self.screen_width / 2), (self.screen_height / 2)))
+        self.display_message('Think LEFT or RIGHT to move', 40, ((self.screen_width / 2), (self.screen_height / 2)))
+        sleep(self.config.PAUSE_LENGTH)
 
+        self.screen.fill(self.bg_color)
+        description = '\n'.join(['In each round a label will be presented, think as it instructs you.',
+                                 'The ball will move according to the label,',
+                                 'the goalie blocks if the prediction is correct.'])
+        self.blit_long_text(description, loc=((self.screen_width / 2), (self.screen_height / 2)))
         sleep(self.config.PAUSE_LENGTH * 2)
+
+    def blit_long_text(self, text, loc, size=25, color=BLACK):
+        font = pg.font.SysFont(name='Roboto', size=size)
+        words = [word.split(' ') for word in text.splitlines()]
+
+        x, y = loc
+        for line in words:
+            line_surface = font.render(line, True, color)
+            line_width, line_height = line_surface.get_size()
+            self.msg_surface.blit(line_surface, (x, y))
+            y += line_height  # Start on new row.
 
     def display_game(self):
         self.screen.blit(self.field, (0, 0))
