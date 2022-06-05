@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 
 import mne
 import numpy as np
-import pandas
+import sklearn
 
 from mne_features.feature_extraction import extract_features
 from new_bci_framework.config.config import Config
@@ -43,19 +43,8 @@ class PreprocessingPipeline:
                             tmin=self._config.TRIAL_START_TIME,
                             tmax=self._config.TRIAL_END_TIME,
                             event_id=self._config.TRIAL_LABELS,
-                            verbose='INFO', baseline=(None, None),
+                            verbose='INFO', baseline=None,
                             on_missing='warn', preload=True)
-
-        L = raw.get_data()[:-1]
-        raw._data[:-1] = L / np.linalg.norm(L)
-
-        normed_epochs = mne.Epochs(raw,
-                                   events,
-                                   tmin=self._config.TRIAL_START_TIME,
-                                   tmax=self._config.TRIAL_END_TIME,
-                                   event_id=self._config.TRIAL_LABELS,
-                                   verbose='INFO', baseline=(None, None),
-                                   on_missing='warn', preload=True)
         self.epochs = epochs
         return epochs
 
@@ -77,6 +66,8 @@ class PreprocessingPipeline:
         #ica.plot_components(exclude)
         #ica.exclude = exclude
 
+        epochs_ica = epochs_ica.apply_baseline(baseline=(None, None),verbose=True)
+
         self.epochs = epochs_ica
 
     def __feature_extraction(self):
@@ -92,11 +83,11 @@ class PreprocessingPipeline:
                      [40, 45]]  # check which frequencies are relevant
 
         # feature documentation - https://mne.tools/mne-features/api.html
-        selected_funcs = {'pow_freq_bands', 'rms',
+        selected_funcs = {'pow_freq_bands', #'rms',
                           'spect_edge_freq',
                           'spect_entropy',
-                          'spect_slope',
-                          'mean', 'variance', 'std', 'skewness', 'ptp_amp',
+                          'spect_slope', 'variance',
+                          #'mean','std', 'skewness', 'ptp_amp',
                           'hjorth_mobility', 'hjorth_complexity'
                           }
         func_params = {'pow_freq_bands__freq_bands': np.asarray(bands_mat),
