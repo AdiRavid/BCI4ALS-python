@@ -63,9 +63,21 @@ class PreprocessingPipeline:
         """
         rejects bad epochs according to the algorithm: https://autoreject.github.io/stable/explanation.html
         """
-        ar = AutoReject()
-        epochs_clean, rejection_log = ar.fit_transform(self.epochs, True)
-        self.epochs = epochs_clean
+        ar = AutoReject(verbose=True)
+        epochs_clean, reject_log = ar.fit_transform(self.epochs, True)
+
+        # run ica on good epochs
+        ica = mne.preprocessing.ICA(random_state=99)
+        ica.fit(epochs_clean)
+        epochs_ica = ica.apply(self.epochs, exclude=ica.exclude)
+
+        # exclude blinks and saccades
+        exclude = [0,  # blinks
+                   2]  # saccades
+        #ica.plot_components(exclude)
+        #ica.exclude = exclude
+
+        self.epochs = epochs_ica
 
     def __feature_extraction(self):
         highpass = self._config.HIGH_PASS_FILTER
