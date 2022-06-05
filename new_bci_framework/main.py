@@ -1,9 +1,5 @@
 import os
 from sys import path as sys_path
-import random
-
-from new_bci_framework.classifier.ensemble_classifier import EnsembleClassifier
-
 
 full_path = os.path.abspath(__file__)
 src_index = full_path.rfind('new_bci_framework')
@@ -14,11 +10,16 @@ os.chdir(path_to_root)
 
 from new_bci_framework.config.config import Config
 from new_bci_framework.session.offline_session import OfflineSession
+from new_bci_framework.session.feedback_session import FeedbackSession
 from new_bci_framework.recorder.open_bci_cyton_recorder import CytonRecorder, BoardIds
 from new_bci_framework.ui.offline_ui import OfflineUI
+from new_bci_framework.ui.soccer_ui import SoccerUI
 from new_bci_framework.paradigm.MI_paradigm import MIParadigm
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
+from new_bci_framework.classifier.dummy_classifier import DummyClassifier
+from new_bci_framework.classifier.ensemble_classifier import EnsembleClassifier
 
+import random
 import mne
 from mne.io import read_raw_fif
 
@@ -58,11 +59,13 @@ if __name__ == '__main__':
         config=config,
         recorder=CytonRecorder(config, board_id=boardID),
         ui=OfflineUI(config),
+        # ui=OfflineUI(config),
         paradigm=MIParadigm(config),
         preprocessor=PreprocessingPipeline(config),
-        classifier=EnsembleClassifier(config)
+        classifier=DummyClassifier(config)
+        # classifier=EnsembleClassifier(config)
     )
-    # session.run_recording()
+    session.run_recording()
     # concat_files()
-    session.run_all(raw_data_path=os.path.join("data", "Sivan_2022-05-29-12-16_raw.fif"))
-    #run_pipeline_for_directory(path=r"data\Sivan", session=session)
+    # session.run_recording()
+    # run_pipeline_for_directory(path=r"data\Sivan", session=session)
