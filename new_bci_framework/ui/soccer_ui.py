@@ -62,25 +62,25 @@ class SoccerUI(UI):
         self.screen.fill(self.bg_color)
         self.display_message('Penalty Kick', 100, ((self.screen_width / 2), (self.screen_height / 4)))
         self.display_message('Think LEFT or RIGHT to move', 40, ((self.screen_width / 2), (self.screen_height / 2)))
-        sleep(self.config.PAUSE_LENGTH)
+        sleep(self.config.PAUSE_LENGTH * 2)
 
         self.screen.fill(self.bg_color)
-        description = '\n'.join(['In each round a label will be presented, think as it instructs you.',
-                                 'The ball will move according to the label,',
-                                 'the goalie blocks if the prediction is correct.'])
-        self.blit_long_text(description, loc=((self.screen_width / 2), (self.screen_height / 2)))
-        sleep(self.config.PAUSE_LENGTH * 2)
+        description = ['In each round a label will be presented, think as it instructs you.',
+                       'The ball will move according to the label.',
+                       'The goalie blocks if the prediction is correct.']
+        for i, line in enumerate(description):
+            self.display_message(line, size=40, loc=((self.screen_width / 2), (self.screen_height / 4) + 40 * i))
+        sleep(self.config.PAUSE_LENGTH * 6)
 
     def blit_long_text(self, text, loc, size=25, color=BLACK):
         font = pg.font.SysFont(name='Roboto', size=size)
-        words = [word.split(' ') for word in text.splitlines()]
-
         x, y = loc
-        for line in words:
+        for line in text.splitlines():
             line_surface = font.render(line, True, color)
             line_width, line_height = line_surface.get_size()
             self.msg_surface.blit(line_surface, (x, y))
             y += line_height  # Start on new row.
+        pg.display.flip()
 
     def display_game(self):
         self.screen.blit(self.field, (0, 0))
@@ -90,11 +90,12 @@ class SoccerUI(UI):
 
     def display_event(self, recorder: Recorder, label: str, surface: pg.Surface) -> None:
         self.display_game()
-        sleep(self.config.PAUSE_LENGTH / 2)
+        sleep(self.config.PAUSE_LENGTH)
         self.clear_surface(self.msg_surface)
-        sleep(self.config.PAUSE_LENGTH / 2)
+        sleep(self.config.PAUSE_LENGTH)
         super(SoccerUI, self).display_event(recorder, label, surface)
         self.clear_surface(self.msg_surface)
+        sleep(self.config.PAUSE_LENGTH)
         self.display_message('Processing')
         sleep(self.config.TRIAL_END_TIME)
         self.clear_surface(self.msg_surface)
@@ -131,6 +132,13 @@ class SoccerUI(UI):
     def move_ball(self, dx, dy):
         self.ball_loc[0] += dx
         self.ball_loc[1] += dy
+
+    def quit(self):
+        self.clear_surface(self.screen)
+        sleep(self.config.PAUSE_LENGTH)
+        self.display_message('Session is over, Thanks!', loc=self.center)
+        sleep(self.config.PAUSE_LENGTH)
+        super(SoccerUI, self).quit()
 
 
 if __name__ == '__main__':

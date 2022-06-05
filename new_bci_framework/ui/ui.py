@@ -21,8 +21,8 @@ class UI:
         self.config = config
 
         # screen width and height:
-        self.screen_width = 800
-        self.screen_height = 600
+        self.screen_width = 1000
+        self.screen_height = 800
         self.center = (self.screen_width / 2, self.screen_height / 2)
         self.msg_loc = self.screen_width / 2, self.screen_height / 4
         self.img_loc = self.center
@@ -48,7 +48,6 @@ class UI:
         self.screen.fill(self.bg_color)
 
     def display_event(self, recorder: Recorder, label: str, surface: pg.Surface) -> None:
-
         self.display_message(msg=f'READY? Think {label}')
         self.display_image(self.images[label])
         sleep(self.config.PRE_CUE_LENGTH)

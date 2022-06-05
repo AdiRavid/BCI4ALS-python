@@ -7,13 +7,6 @@ from new_bci_framework.config.config import Config
 class DummyClassifier(BaseClassifier):
     def __init__(self, config: Config):
         super().__init__(config)
-        self.g = self.gen()
-
-    def gen(self):
-        predictions = [3, 2, 3, 1]
-        for p in predictions:
-            yield p
 
     def predict(self, data: np.ndarray):
-        # return np.random.choice(list(self._config.TRIAL_LABELS.values()), 1)
-        return np.array([next(self.g)])
+        return np.random.choice(list(self._config.TRIAL_LABELS.values()), 1)
