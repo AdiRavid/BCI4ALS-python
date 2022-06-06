@@ -65,13 +65,17 @@ if __name__ == '__main__':
         # ui=OfflineUI(config),
         paradigm=MIParadigm(config),
         preprocessor=PreprocessingPipeline(config),
-        # classifier=DummyClassifier(config)
+        # classifier=DummyClassifier(config) # TODO: activate the classifier you want to use.
         # classifier=EnsembleClassifier(config)
         # classifier=RandomforestClassifier(config)
-        # classifier = AdaboostClassifier(config)
+        # classifier = LogisticRegressionClassifier(config)
         classifier=XGBClassifier(config)
     )
-    # session.run_recording()
-    # concat_files()
+
+    # TODO: activate to run on of: RandomforestClassifier, LogisticRegressionClassifier, XGBClassifier,
+    #  and add path to directory that contains the fif files.
     session.run_all(raw_data_path=os.path.join("data\Sivan"))
+
+    # TODO: activate to run on of: EnsembleClassifier, RandomForestEnsembleClassifier, LogisticRegressionEnsembleClassifier,
+    #  and add path to directory that contains the fif files.
     # run_pipeline_for_directory(path=r"data\Sivan", session=session)

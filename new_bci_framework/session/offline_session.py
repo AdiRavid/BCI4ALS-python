@@ -78,12 +78,11 @@ class OfflineSession(Session):
 
         self.filename = self.raw_data.filenames[0].split('/')[-1].split('.')[0]
         self.run_preprocessing()
-        # self.feature_selection()
-        self.run_classifier(split=False)  # TODO: change split
+        self.run_classifier(split=False)  # for ensemble don't use split.
 
     def run_all(self, raw_data_path=''):
         concat_epochs = None
-        if not raw_data_path:
+        if not raw_data_path:  # recording without preprocess and classifier.
             self.run_recording()
             self.raw_data = self.recorder.get_raw_data()
         else:
@@ -103,12 +102,12 @@ class OfflineSession(Session):
                 else:
                     concat_process_data = np.concatenate((concat_process_data, self.processed_data), axis=0)
                     concat_label = np.concatenate((concat_label, self.labels), axis=0)
-                    # concat_epochs = np.concatenate((concat_epochs, self.preprocessor.epochs.get_data()), axis=0)
+                    concat_epochs = np.concatenate((concat_epochs, self.preprocessor.epochs.get_data()), axis=0)
 
             print(f"<--- Done preprocess- concat and start fit classifier--->")
 
             self.processed_data, self.labels = concat_process_data, concat_label
-            self.run_classifier(split=True)  # TODO: change split
+            self.run_classifier(split=True)
 
             # evaluate for last file
             raw_path_eval = os.path.join(os.getcwd(), raw_data_path, files[-1])
@@ -118,8 +117,8 @@ class OfflineSession(Session):
             self.run_preprocessing()
             self.run_evaluation(self.processed_data, self.labels)
 
-        #   concat_label = np.concatenate((concat_label, self.labels), axis=0)
-        #    concat_epochs = np.concatenate((concat_epochs, self.preprocessor.epochs.get_data()), axis=0)
+            concat_label = np.concatenate((concat_label, self.labels), axis=0)
+            concat_epochs = np.concatenate((concat_epochs, self.preprocessor.epochs.get_data()), axis=0)
 
-        # pickle.dump(concat_label, open("concat_label", 'wb'))
-        # pickle.dump(concat_epochs, open("concat_epochs", 'wb'))
+            # pickle.dump(concat_label, open("concat_label", 'wb'))
+            # pickle.dump(concat_epochs, open("concat_epochs", 'wb'))

@@ -25,10 +25,7 @@ class XGBClassifier(BaseClassifier):
         X = self.feature_selection(X, y)
 
         best_param = op.run_optuna_xgb(X, y)
-        # best_param ={'n_estimators': 168, 'max_depth': 41, 'learning_rate': 0.8377888847702736, 'colsample_bytree': 0.03332290674009903, 'alpha': 0.7944467940987507, 'booster': 'gbtree', 'tree_method': 'hist', 'importance_type': 'total_cover'}
         self._model = xgb.XGBClassifier(best_param)
-        # self._model = RandomForestClassifier(n_estimators=5, max_depth=3)
-        # self._model = SVC()
         self._model.fit(X, y)
 
     def predict(self, X: np.ndarray):
