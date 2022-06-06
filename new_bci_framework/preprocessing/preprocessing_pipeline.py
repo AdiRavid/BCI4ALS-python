@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 
 import mne
 import numpy as np
+import pandas
 import sklearn
 
 from mne_features.feature_extraction import extract_features
@@ -70,7 +71,7 @@ class PreprocessingPipeline:
 
         self.epochs = epochs_ica
 
-    def __feature_extraction(self):
+    def __feature_extraction(self, raw):
         highpass = self._config.HIGH_PASS_FILTER
         lowpass = self._config.LOW_PASS_FILTER
 
@@ -101,8 +102,8 @@ class PreprocessingPipeline:
         self.processed_data = processed_data_df.to_numpy()
 
         # save features list
-        # filename = raw_data.filenames[0].split('/')[-1].split('.')[0]
-        # features_df.to_excel(os.path.join("new_bci_framework","preprocessing", filename + "_" + "all_features.xlsx"))
+        filename = raw.filenames[0].split('/')[-1].split('.')[0]
+        processed_data_df.to_excel(os.path.join("new_bci_framework","preprocessing", filename + "_" + "all_features.xlsx"))
 
         self.labels = np.asarray(self.epochs.events[:, 2])
         return self.processed_data, self.labels
@@ -114,4 +115,4 @@ class PreprocessingPipeline:
             self._reject()
         # Laplacian:
         self.epochs = mne.preprocessing.compute_current_source_density(self.epochs)
-        return self.__feature_extraction()
+        return self.__feature_extraction(raw)

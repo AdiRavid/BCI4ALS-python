@@ -7,8 +7,10 @@ from new_bci_framework.classifier.base_classifier import BaseClassifier
 from new_bci_framework.config.config import Config
 import pickle
 
+from sklearn.linear_model import LogisticRegression
 
-class EnsembleClassifier(BaseClassifier):
+
+class LogisticRegressionEnsembleClassifier(BaseClassifier):
 
     def __init__(self, config: Config):
         super().__init__(config)
@@ -18,11 +20,8 @@ class EnsembleClassifier(BaseClassifier):
         self._ensemble = self._ensemble if self._ensemble else []
         X = self.feature_selection(X, y)
 
-        best_param = op.run_optuna_xgb(X, y)
-        new_classifier = xgb.XGBClassifier(best_param)
-        # new_classifier = xgb.XGBClassifier(n_estimators=185, max_depth=9, learning_rate=0.8052,
-        #                                    colsample_bytree=0.4073, alpha=3.0899, booster='dart',
-        #                                    tree_method='exact', importance_type='total_gain')
+        best_param = op.run_optuna_LR(X, y)
+        new_classifier = LogisticRegression(solver='liblinear', **best_param)
         new_classifier.fit(X, y)
         self._ensemble.append(new_classifier)
 
@@ -45,10 +44,10 @@ class EnsembleClassifier(BaseClassifier):
         raise NotImplementedError
 
     def save_classifier(self):
-        pickle.dump(self._ensemble, open(self._config.MODEL_PATH + "_Ensemble", 'wb'))
+        pickle.dump(self._ensemble, open(self._config.MODEL_PATH + "_EnsembleLR", 'wb'))
 
     def load_classifier(self):
-        self._ensemble = pickle.load(open(self._config.MODEL_PATH + "_Ensemble", 'rb'))
+        self._ensemble = pickle.load(open(self._config.MODEL_PATH + "_EnsembleLR", 'rb'))
 
     def evaluate(self, X: np.ndarray, y: np.ndarray):
         # transform is called in predict
@@ -58,4 +57,4 @@ class EnsembleClassifier(BaseClassifier):
         print("----------------------- EVALUATION --------------------------")
         x = classification_report(y, prediction)
         print(x)
-        pickle.dump(self._ensemble, open(f"xgb_ensemble_{x['accuracy']}", 'wb'))
+        pickle.dump(self._ensemble, open(f"xgb_ensemble_LR", 'wb'))
