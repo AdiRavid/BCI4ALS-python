@@ -5,6 +5,9 @@ from new_bci_framework.config.config import Config
 
 
 class DummyClassifier(BaseClassifier):
+    """
+    Dummy classifier that returns random prediction.
+    """
     def __init__(self, config: Config):
         super().__init__(config)
 

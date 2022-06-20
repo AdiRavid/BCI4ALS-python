@@ -28,6 +28,8 @@ class Session:
         self.filename = ""
         self.save = True
 
+    ## run recording with the initiated paradigm.
+    ## if save=true, then save the recoreded data to the data directory.
     def run_recording(self):
         self.recorder.start_recording()
         self.recorder.plot_live_data()
@@ -41,12 +43,15 @@ class Session:
     def run_paradigm(self):
         raise NotImplementedError
 
+    ## run preprocessing on the data.
     def run_preprocessing(self):
         self.processed_data, self.labels = self.preprocessor.run_pipeline(self.raw_data)
 
     def run_classifier(self):
         raise NotImplementedError
 
+    ## run pipeline over the data.
+    ## if data is not given, run recoreding. otherwise use given data.
     def run_all(self, raw_data=None):
         if not raw_data:  # if no data given, evoke the recorder
             self.run_recording()

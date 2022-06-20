@@ -1,3 +1,5 @@
+
+
 import mne
 from sklearn.ensemble import RandomForestClassifier
 
@@ -13,14 +15,16 @@ from sklearn.svm import SVC
 
 class XGBClassifier(BaseClassifier):
     """
-    Basic class for a classifier for session eeg data.
-    API includes training, prediction and evaluation.
+    XGB classifier.
     """
 
     def __init__(self, config: Config):
         super().__init__(config)
         self._model = None
 
+    ## fit model using the given data.
+    ## we do feature selection over the data.
+    ## we run optuna for finding best parameter for training.
     def fit(self, X: np.ndarray, y: np.ndarray):
         X = self.feature_selection(X, y)
 
@@ -28,9 +32,11 @@ class XGBClassifier(BaseClassifier):
         self._model = xgb.XGBClassifier(best_param)
         self._model.fit(X, y)
 
+    ## make prediction over given data (use the same feature selection).
     def predict(self, X: np.ndarray):
         X = self.selector.transform(X)
         return self._model.predict(X)
 
+    ## save classifier to pickle.
     def save_classifier(self):
         pickle.dump(self._model, open(self._config.MODEL_PATH + "_XGB", 'wb'))
