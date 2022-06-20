@@ -23,8 +23,10 @@ class EnsembleClassifier(BaseClassifier):
     ## the model is trained with after running optuna that finds the best parameters.
     def fit(self, X: np.ndarray, y: np.ndarray):
         self._ensemble = self._ensemble if self._ensemble else []
-        X = self.feature_selection(X, y)
-
+        if self._ensemble: # think about saving features for each model individually and using them in the prediction
+            # instead of using the same set of features for each recording
+            X = self.selector.transform(X)
+        else: X = self.feature_selection(X, y)
         best_param = op.run_optuna_xgb(X, y)
         new_classifier = xgb.XGBClassifier(best_param)
         new_classifier.fit(X, y)
@@ -37,7 +39,6 @@ class EnsembleClassifier(BaseClassifier):
     ## predict using the ensemble- each model gives prediction and then the major vote is calculated.
     def predict(self, X: np.ndarray):
         X = self.selector.transform(X)
-
         ensemble_prediction = np.ndarray((len(self._ensemble), X.shape[0]))
         for i, current_classifier in enumerate(self._ensemble):
             ensemble_prediction[i] = current_classifier.predict(X)

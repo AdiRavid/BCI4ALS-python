@@ -16,11 +16,16 @@ In order to run our framework run main.py.
 
 ## classifier
 ___
-**TODO - add our classifiers, maybe add all?**
 
 * base_classifier.py - the basic API that all classifiers need to follow.
-* optuna_runner.py - contains the function "run_optuna" which runs optuna (A hyperparameter optimization framework) for 
-xgb classifier.
+* dummy_classifier.py - Dummy classifier that returns random prediction.
+* ensemble_classifier.py - Ensemble classifier of xgb models. the ensemble is an array of xgb model, that decide using the "major vote".  
+* xgb_classifier.py - XGB classifier.
+* random_forest_classifier.py - Random Forest classifier.
+* logistic_regression_classifier.py - Logistic Regression classifier.  
+* optuna_runner.py - contains 3 functions which runs optuna (A hyperparameter optimization framework) for 
+xgb classifier, RandomForest classifier and LogisiticRegression classifier.
+  
   
  
 ## config
@@ -65,7 +70,7 @@ ___
 
 * session.py - the basic API that all sessions should follow.
 * offline_session.py - this class is responsible for running an offline training session.
-* co_adaptive_session.py - this class is responsible for running an online training session (with feedback).
+* feedback_session.py - this class is responsible for running an online training session (with feedback).
 
 ## ui
 ___

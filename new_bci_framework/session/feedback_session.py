@@ -9,7 +9,9 @@ from new_bci_framework.classifier.base_classifier import BaseClassifier
 
 
 class FeedbackSession(Session):
-
+    """
+    Subclass of session for an feedback recording session.
+    """
     def __init__(self, config: Config, recorder: Recorder, ui: UI, paradigm: Paradigm,
                  preprocessor: PreprocessingPipeline, classifier: BaseClassifier):
         super().__init__(config, recorder, ui, paradigm, preprocessor, classifier)

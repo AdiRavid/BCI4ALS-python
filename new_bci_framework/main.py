@@ -2,10 +2,6 @@ import os
 from sys import path as sys_path
 import random
 
-from new_bci_framework.classifier.adaboost_classifier import AdaboostClassifier
-from new_bci_framework.classifier.ensemble_classifier import EnsembleClassifier
-from new_bci_framework.classifier.logistic_regression_classifier import LogisticRegressionClassifier
-from new_bci_framework.classifier.random_forest_classifier import RandomforestClassifier
 from new_bci_framework.classifier.xgb_classifier import XGBClassifier
 
 full_path = os.path.abspath(__file__)
