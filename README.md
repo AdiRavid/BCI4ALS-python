@@ -41,17 +41,14 @@ ___
 ## plotting
 ___
 
-**TODO - understand if we need it and if so what, I don't think we need the plot_raw_data**
-
-* plot_epochs.py - we use this code to plot the average of epochs by class for a single fif file.
+* plot_epochs.py - we use this code to plot the average of epochs by class for a single fif file. 
+  The script also plots average psd for each class as well as average eeg epoch.  
 
 ## preprocessing
 ___
 
-**TODO - delete the file preprocessing.py we use the other one.**
-
-* preprocessing_pipeline.py - this class contains the preprocessing we perform on the raw data; filtering, segmentation, auto-reject,
-and feature extraction.
+* preprocessing_pipeline.py - this class contains the preprocessing we perform on the raw data:
+    filtering(highpass/lowpass + notch), segmentation, auto-reject (with ica), baseline correction, laplacian and feature extraction.
 
 ## recorder 
 ___
