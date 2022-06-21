@@ -1,6 +1,6 @@
 from new_bci_framework.config.config import Config
 from new_bci_framework.recorder.recorder import Recorder
-from new_bci_framework.recording_ui.recording_ui import RecordingUI
+from new_bci_framework.ui.recording_ui.recording_ui import RecordingUI
 from new_bci_framework.paradigm.paradigm import Paradigm
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.classifier.base_classifier import BaseClassifier
