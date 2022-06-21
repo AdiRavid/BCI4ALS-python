@@ -17,11 +17,16 @@ In order to run our framework run main.py.
 
 ## classifier
 ___
-**TODO - add our classifiers, maybe add all?**
 
 * base_classifier.py - the basic API that all classifiers need to follow.
-* optuna_runner.py - contains the function "run_optuna" which runs optuna (A hyperparameter optimization framework) for 
-xgb classifier.
+* dummy_classifier.py - Dummy classifier that returns random prediction.
+* ensemble_classifier.py - Ensemble classifier of xgb models. the ensemble is an array of xgb model, that decide using the "major vote".  
+* xgb_classifier.py - XGB classifier.
+* random_forest_classifier.py - Random Forest classifier.
+* logistic_regression_classifier.py - Logistic Regression classifier.  
+* optuna_runner.py - contains 3 functions which runs optuna (A hyperparameter optimization framework) for 
+xgb classifier, RandomForest classifier and LogisiticRegression classifier.
+  
   
  
 ## config
@@ -42,17 +47,14 @@ ___
 ## plotting
 ___
 
-**TODO - understand if we need it and if so what, I don't think we need the plot_raw_data**
-
-* plot_epochs.py - we use this code to plot the average of epochs by class for a single fif file.
+* plot_epochs.py - we use this code to plot the average of epochs by class for a single fif file. 
+  The script also plots average psd for each class as well as average eeg epoch.  
 
 ## preprocessing
 ___
 
-**TODO - delete the file preprocessing.py we use the other one.**
-
-* preprocessing_pipeline.py - this class contains the preprocessing we perform on the raw data; filtering, segmentation, auto-reject,
-and feature extraction.
+* preprocessing_pipeline.py - this class contains the preprocessing we perform on the raw data:
+    filtering(highpass/lowpass + notch), segmentation, auto-reject (with ica), baseline correction, laplacian and feature extraction.
 
 ## recorder 
 ___
@@ -69,7 +71,7 @@ ___
 
 * session.py - the basic API that all sessions should follow.
 * offline_session.py - this class is responsible for running an offline training session.
-* co_adaptive_session.py - this class is responsible for running an online training session (with feedback).
+* feedback_session.py - this class is responsible for running an online training session (with feedback).
 
 ## recording ui
 ___

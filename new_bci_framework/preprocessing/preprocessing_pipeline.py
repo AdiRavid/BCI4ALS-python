@@ -3,18 +3,17 @@ from typing import Optional, Tuple
 
 import mne
 import numpy as np
-import pandas
-import sklearn
 
 from mne_features.feature_extraction import extract_features
 from new_bci_framework.config.config import Config
 from autoreject import AutoReject
 
-
 class PreprocessingPipeline:
     """
     A Preprocessing pipeline. In essence it receives a raw data object and returns teh segmented data as
-    an Epochs object, after preforming filters, cleaning etc.
+    an np_array with another labels array composed of each feature for each epoch of data, ready to feed to the
+    classifier.
+    See run_pipeline for a thorough explanation of the preprocessing steps.
     Further design of this class can allow subclassing or other forms of modularity, allowing us to easily
     swap different pipelines.
     """
@@ -52,6 +51,7 @@ class PreprocessingPipeline:
     def _reject(self):
         """
         rejects bad epochs according to the algorithm: https://autoreject.github.io/stable/explanation.html
+        and runs ica on good epochs after to fix artifacts.
         """
         ar = AutoReject(verbose=True)
         epochs_clean, reject_log = ar.fit_transform(self.epochs, True)
@@ -64,12 +64,15 @@ class PreprocessingPipeline:
         # exclude blinks and saccades
         exclude = [0,  # blinks
                    2]  # saccades
+
+        # uncomment for plotting ica components
         #ica.plot_components(exclude)
         #ica.exclude = exclude
 
-        epochs_ica = epochs_ica.apply_baseline(baseline=(None, None),verbose=True)
-
         self.epochs = epochs_ica
+
+    def __baseline_correction(self):
+        self.epochs = self.epochs.apply_baseline(baseline=(None, None), verbose=True)
 
     def __feature_extraction(self, raw):
         highpass = self._config.HIGH_PASS_FILTER
@@ -83,7 +86,10 @@ class PreprocessingPipeline:
                      [30, 40],
                      [40, 45]]  # check which frequencies are relevant
 
+
         # feature documentation - https://mne.tools/mne-features/api.html
+        # amplitude related features (rms,mean,std,skewness,ptp_amp) were commented out when working
+        # with combined data from multiple session due to variability in amplitudes across sessions.
         selected_funcs = {'pow_freq_bands', #'rms',
                           'spect_edge_freq',
                           'spect_entropy',
@@ -103,16 +109,31 @@ class PreprocessingPipeline:
 
         # save features list
         filename = raw.filenames[0].split('/')[-1].split('.')[0]
-        processed_data_df.to_excel(os.path.join("new_bci_framework","preprocessing", filename + "_" + "all_features.xlsx"))
+        processed_data_df.to_excel(os.path.join("new_bci_framework", "preprocessing", filename + "_" + "all_features.xlsx"))
 
         self.labels = np.asarray(self.epochs.events[:, 2])
         return self.processed_data, self.labels
 
+
+
     def run_pipeline(self, raw: mne.io.Raw) -> Tuple[np.ndarray, np.ndarray]:
+        # 1. highpass-lowpass & notch filter:
         raw, events = self._filter(raw)
+
+        # 2. extract segments according to the events
         self.epochs = self._segment(raw, events)
+
+        # 3. reject bad epochs and fix artifacts with ica
+        #   (there is only one epoch during online session so we don't want to reject)
         if len(self.epochs) > 1:
             self._reject()
-        # Laplacian:
+
+        # 4. baseline correction (needs to be after autoreject)
+        self.__baseline_correction()
+
+        # 5. Laplacian:
         self.epochs = mne.preprocessing.compute_current_source_density(self.epochs)
+
+        # 6. Extract all features from each epoch
+        #    returns data_in_features,labels to feed the classifier
         return self.__feature_extraction(raw)

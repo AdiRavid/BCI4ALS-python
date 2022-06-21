@@ -7,6 +7,9 @@ from sklearn.linear_model import LogisticRegression
 
 
 def run_optuna_xgb(X, y):
+    """
+    runs optuna hyper-parameter optimaizer on the given X data and y labels for the xgb classifier
+    """
     def objective_xgb(trial):
         # data loading and train-test split
         X_train, X_test, y_train, y_test = train_test_split(X, y)
@@ -21,15 +24,6 @@ def run_optuna_xgb(X, y):
         tree_method = trial.suggest_categorical('tree_method', ('approx', 'auto', 'exact', 'hist'))
         importance_type = trial.suggest_categorical('importance_type',
                                                     ('gain', 'weight', 'cover', 'total_gain', 'total_cover'))
-        # is_weighted = trial.suggest_categorical('is_weighted', ('yes', 'no'))
-        # if is_weighted == 'yes':
-        #     model = xgb.XGBClassifier(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate,
-        #                               colsample_bytree=colsample_bytree,
-        #                               alpha=alpha, booster=booster, tree_method=tree_method,
-        #                               importance_type=importance_type,
-        #                               scale_pos_weight=sum(label_test["abelTest"].flatten() == 2) / sum(
-        #                                   label_test["LabelTest"].flatten() == 3))
-        # else:
         model = xgb.XGBClassifier(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate,
                                   colsample_bytree=colsample_bytree,
                                   alpha=alpha, booster=booster, tree_method=tree_method,
@@ -41,13 +35,9 @@ def run_optuna_xgb(X, y):
 
         # evaluation
         report = classification_report(y_test, y_pred, output_dict=True)
-        #     recall_one = report['1']['recall']
-        #     recall_zero = report['0']['recall']
-        #     precision_one = report['1']['precision']
-        #     precision_zero = report['0']['precision']
 
         # output: evaluation score
-        return report['accuracy']  # + report['1.0']['recall'] + report['2.0']['recall'] + report['3.0']['recall']
+        return report['accuracy']
 
     study_xgb = optuna.create_study(
         direction='maximize')  # Set minimize for minimization and maximize for maximization.
@@ -58,6 +48,9 @@ def run_optuna_xgb(X, y):
 
 
 def run_optuna_LR(X, y):
+    """
+    runs optuna hyper-parameter optimaizer on the given X data and y labels for the logistic regression classifier
+    """
     def objective_LR(trial):
         # data loading and train-test split
         X_train, X_test, y_train, y_test = train_test_split(X, y)
@@ -88,6 +81,9 @@ def run_optuna_LR(X, y):
 
 
 def run_optuna_RF(X, y):
+    """
+    runs optuna hyper-parameter optimaizer on the given X data and y labels for the random forest classifier
+    """
     def objective_RF(trial):
         # data loading and train-test split
         X_train, X_test, y_train, y_test = train_test_split(X, y)
@@ -108,13 +104,9 @@ def run_optuna_RF(X, y):
 
         # evaluation
         report = classification_report(y_test, y_pred, output_dict=True)
-        #     recall_one = report['1']['recall']
-        #     recall_zero = report['0']['recall']
-        #     precision_one = report['1']['precision']
-        #     precision_zero = report['0']['precision']
 
         # output: evaluation score
-        return report['accuracy']  # + report['1.0']['recall'] + report['2.0']['recall'] + report['3.0']['recall']
+        return report['accuracy']
 
     study_RF = optuna.create_study(direction='maximize')  # Set minimize for minimization and maximize for maximization.
     # To start the optimization, we create a study object and pass the objective function to method

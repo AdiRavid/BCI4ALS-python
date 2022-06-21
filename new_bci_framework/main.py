@@ -1,29 +1,33 @@
 import os
-from sys import path as sys_path
-import random
+import sys
 
-
+# Add root to path:
 full_path = os.path.abspath(__file__)
 src_index = full_path.rfind('new_bci_framework')
 path_to_root = full_path[: src_index]
-if path_to_root not in sys_path:
-    sys_path.append(path_to_root)
+if path_to_root not in sys.path:
+    sys.path.append(path_to_root)
 os.chdir(path_to_root)
 
-from new_bci_framework.config.config import Config
-from new_bci_framework.session.offline_session import OfflineSession
-from new_bci_framework.recorder.open_bci_cyton_recorder import CytonRecorder, BoardIds
-from new_bci_framework.recording_ui.offline_recording_ui import OfflineRecordingUI
-from new_bci_framework.paradigm.MI_paradigm import MIParadigm
-from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
-from new_bci_framework.classifier.adaboost_classifier import AdaboostClassifier
-from new_bci_framework.classifier.ensemble_classifier import EnsembleClassifier
-from new_bci_framework.classifier.logistic_regression_classifier import LogisticRegressionClassifier
-from new_bci_framework.classifier.random_forest_classifier import RandomforestClassifier
-from new_bci_framework.classifier.xgb_classifier import XGBClassifier
-
+import random
 import mne
 from mne.io import read_raw_fif
+
+# General
+from new_bci_framework.config.config import Config
+from new_bci_framework.recorder.open_bci_cyton_recorder import CytonRecorder, BoardIds
+from new_bci_framework.paradigm.MI_paradigm import MIParadigm
+from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
+from new_bci_framework.classifier.xgb_classifier import XGBClassifier
+
+# Offline session
+from new_bci_framework.session.offline_session import OfflineSession
+from new_bci_framework.ui.recording_ui.offline_recording_ui import OfflineRecordingUI
+
+# Feedback session
+from new_bci_framework.session.feedback_session import FeedbackSession
+from new_bci_framework.ui.recording_ui.feedback_recording_ui import FeedbackRecordingUI
+
 
 # search_path = os.path.join(os.getcwd(), "data", "Sivan")
 
