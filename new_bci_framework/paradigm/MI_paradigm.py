@@ -10,7 +10,7 @@ class MIParadigm(Paradigm):
 
     def __init__(self, config: Config):
         super(MIParadigm, self).__init__(config)
-        self.trial_labels = config.TRIAL_LABELS
+        self.trial_labels = config.LABELS2MARKERS
         self.num_trials_per_class = config.NUM_TRIALS_PER_CLASS
 
     def get_events(self):

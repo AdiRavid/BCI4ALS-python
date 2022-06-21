@@ -43,7 +43,7 @@ class PreprocessingPipeline:
                             events,
                             tmin=self._config.TRIAL_START_TIME,
                             tmax=self._config.TRIAL_END_TIME,
-                            event_id=self._config.TRIAL_LABELS,
+                            event_id=self._config.LABELS2MARKERS,
                             verbose='INFO', baseline=None,
                             on_missing='warn', preload=True)
         self.epochs = epochs

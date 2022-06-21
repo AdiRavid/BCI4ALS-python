@@ -3,7 +3,8 @@ ___
 
 #### Python framework for the 2022 BCI4ALS course by team 33 HUJI.
 
-_Some of the code in the beginning was taken from team 34 HUJI._
+_General framework and part of the code in the recorder classes was taken from HUJI team 34 (2021-2022) - 
+https://github.com/AviH0/bci4als-2022-python/tree/main/new_bci_framework._
 
 ## Basic Usage
 ___
@@ -70,17 +71,20 @@ ___
 * offline_session.py - this class is responsible for running an offline training session.
 * co_adaptive_session.py - this class is responsible for running an online training session (with feedback).
 
-## ui
+## recording ui
 ___
-
-* ui.py - the basic API that all ui should follow.
-* offline_ui.py - this class is responsible for the ui of an offline session.
-* co_adaptive_ui.py - this class is responsible for the ui of an online session (with feedback).
-* resources: (images for offline ui)
+ These classes are in charge of the experiment's recording phase GUI. 
+ They implement a user-interface for running the paradigm and collecting data from the subject.
+* **recording_ui.py** - The parent class, implements some shared features of all UIs and defines the basic API that all UIs should follow.
+* **offline_recording_ui.py** - A subclass responsible for the UI of an offline session.
+* **feedback_recording_ui.py** - A subclass responsible for the UI of a session with a feedback-loop.
+* **resources**: (images for UIs)
   * idle.png
   * left.png
   * right.png
-* car dodge game PYTHON - (**TODO: maybe change the name?**)
-  * **TODO - choose the relevant files**
+  * soccer_ball.png
+  * soccer_field.png
+  * soccer_player.png
+
 
   

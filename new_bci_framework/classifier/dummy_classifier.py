@@ -9,4 +9,4 @@ class DummyClassifier(BaseClassifier):
         super().__init__(config)
 
     def predict(self, data: np.ndarray):
-        return np.random.choice(list(self._config.TRIAL_LABELS.values()), 1)
+        return np.random.choice(list(self._config.LABELS2MARKERS.values()), 1)

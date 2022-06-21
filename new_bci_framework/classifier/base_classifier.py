@@ -18,8 +18,6 @@ class BaseClassifier:
         self._config = config
         self.selector = None
 
-
-
     def feature_selection(self, X, y):
         num_of_features = 20 #self._config.NUM_OF_FEATURES
         self.selector = SelectKBest(score_func=mutual_info_classif, k=num_of_features)
@@ -66,7 +64,6 @@ class BaseClassifier:
         # sn.heatmap(conf_mat, annot=True)
         # plt.title('confusion matrix for XGB')
         # plt.show()
-
 
     def save_classifier(self):
         raise NotImplementedError

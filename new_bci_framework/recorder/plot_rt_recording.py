@@ -36,7 +36,7 @@ class Graph:
         self.psd.setTitle('Power Spectrum')
         self.psd.enableAutoRange(ViewBox.YAxis)
         self.psd.addLegend((-20, 10))
-        for i in self.config.REAL_CHANNEL_INDXS:
+        for i in self.config.REAL_CHANNEL_INDICES:
             p = self.win.addPlot(row=i,col=0)
             p.showAxis('left', True)
             p.setLabel('left', self.ch_names[i], 'uV')
@@ -60,7 +60,7 @@ class Graph:
     def update(self):
         data = self.board_shim.get_current_board_data(self.num_points)
         data *= (24 // self.config.GAIN_VALUE)
-        for count, channel in enumerate(self.exg_channels[:len(list(self.config.REAL_CHANNEL_INDXS))]):
+        for count, channel in enumerate(self.exg_channels[:len(list(self.config.REAL_CHANNEL_INDICES))]):
             # plot timeseries
 
             DataFilter.detrend(data[channel], DetrendOperations.CONSTANT.value)
