@@ -1,7 +1,7 @@
 from mne.io import read_raw_fif
 from new_bci_framework.config.config import Config
 from new_bci_framework.session.offline_session import OfflineSession
-from new_bci_framework.recorder.open_bci_cyton_recorder import CytonRecorder, BoardIds
+from new_bci_framework.recorder.cyton_recorder import CytonRecorder, BoardIds
 from new_bci_framework.preprocessing.preprocessing_pipeline import PreprocessingPipeline
 from new_bci_framework.paradigm.MI_paradigm import MIParadigm
 from new_bci_framework.classifier.ensemble_classifier import EnsembleClassifier

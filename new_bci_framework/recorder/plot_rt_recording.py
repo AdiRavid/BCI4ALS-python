@@ -1,3 +1,6 @@
+########################################################################################################################
+#                                                      Imports                                                         #
+########################################################################################################################
 import brainflow
 import numpy as np
 import pyqtgraph as pg
@@ -7,7 +10,13 @@ from pyqtgraph import ViewBox, intColor
 from pyqtgraph.Qt import QtGui, QtCore
 
 
+########################################################################################################################
+#                                                   Implementation                                                     #
+########################################################################################################################
 class Graph:
+    """
+    This class implements real time plotting of the eeg signal from the recorder.
+    """
     def __init__(self, board_shim, ch_names, config):
         self.board_id = board_shim.get_board_id()
         self.board_shim = board_shim
@@ -18,7 +27,7 @@ class Graph:
         self.num_points = self.window_size * self.sampling_rate
         self.ch_names = ch_names
         self.app = QtGui.QApplication([])
-        self.win = pg.GraphicsWindow(title='BrainFlow Plot',size=(800, 600))
+        self.win = pg.GraphicsWindow(title='BrainFlow Plot', size=(800, 600))
         self.config = config
         self._init_timeseries()
 
@@ -27,8 +36,10 @@ class Graph:
         timer.start(self.update_speed_ms)
         QtGui.QApplication.instance().exec_()
 
-
-    def _init_timeseries(self):
+    def _init_timeseries(self) -> None:
+        """
+        Initiate plot
+        """
         self.plots = list()
         self.curves = list()
         self.psd_curves = list()
@@ -37,7 +48,7 @@ class Graph:
         self.psd.enableAutoRange(ViewBox.YAxis)
         self.psd.addLegend((-20, 10))
         for i in self.config.REAL_CHANNEL_INDICES:
-            p = self.win.addPlot(row=i,col=0)
+            p = self.win.addPlot(row=i, col=0)
             p.showAxis('left', True)
             p.setLabel('left', self.ch_names[i], 'uV')
             p.setMenuEnabled('left', False)
@@ -54,15 +65,14 @@ class Graph:
             curve = self.psd.plot(connect='all', pen=color, name=self.ch_names[i])
             self.psd_curves.append(curve)
 
-
-
-
-    def update(self):
+    def update(self) -> None:
+        """
+        Updates the signal plots and applies some filtering for easier viewing and interpretation.
+        """
         data = self.board_shim.get_current_board_data(self.num_points)
         data *= (24 // self.config.GAIN_VALUE)
         for count, channel in enumerate(self.exg_channels[:len(list(self.config.REAL_CHANNEL_INDICES))]):
             # plot timeseries
-
             DataFilter.detrend(data[channel], DetrendOperations.CONSTANT.value)
             DataFilter.perform_highpass(data[channel], self.sampling_rate, 1, 2,
                                         FilterTypes.BUTTERWORTH.value, 0)
@@ -78,7 +88,8 @@ class Graph:
             #                             FilterTypes.BUTTERWORTH.value, 0)
             self.curves[count].setData(data[channel].tolist())
             try:
-                amp, freq = DataFilter.get_psd(data[channel, -512:], self.sampling_rate, brainflow.WindowFunctions.HAMMING.value)
+                amp, freq = DataFilter.get_psd(data[channel, -512:], self.sampling_rate,
+                                               brainflow.WindowFunctions.HAMMING.value)
             except BrainFlowError:
                 # When the data starts arriving there arent 512 points to do fft so get_psd will raise an error.
                 freq = np.arange(0, 125)

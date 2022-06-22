@@ -58,28 +58,26 @@ ___
 
 ## recorder 
 ___
-
-**TODO - delete the files: plot_rt_recording_old.py, test.py, montage.loc (we use the predefined montage) and complete 
-the missing description**
-
-* open_bci_cyton_recorder.py - 
-* plot_rt_recording.py - allows us to see the recording in real time in python before starting the recording.
-* recorder.py - 
+Takes care of all aspects of recording the eeg data.
+* **recorder.py** - Defines the class `Recorder` - public API for starting and stopping a recording, for pushing markers if a recording is in progress and for retrieving the data from the last recording as mne.Raw.
+* **cyton_recorder.py** - Implements the class `CytonRecorder`, a subclass of `Recorder` which implements recording via a Cyton board.
+* **plot_rt_recording.py** - Implementation for real time plotting of the eeg signal from the recorder.
+* **montage.loc** - A file specifying the location of the used electrodes on the helmet (i.e. on the subject's head).  
 
 ## session
 ___
-
-* session.py - the basic API that all sessions should follow.
-* offline_session.py - this class is responsible for running an offline training session.
-* feedback_session.py - this class is responsible for running an online training session (with feedback).
+The 'manager' of a recording session: runs the recording, the preprocessing and the classification.
+* **session.py** - Defines the class `Session` - a base class and a public API for an EEG session. This class also implements some shared features of all sessions.
+* **offline_session.py** - this class is responsible for running an offline training session.
+* **feedback_session.py** - this class is responsible for running an online training session (with feedback).
 
 ## recording ui
 ___
  These classes are in charge of the experiment's recording phase GUI. 
  They implement a user-interface for running the paradigm and collecting data from the subject.
-* **recording_ui.py** - The parent class, implements some shared features of all UIs and defines the basic API that all UIs should follow.
-* **offline_recording_ui.py** - A subclass responsible for the UI of an offline session.
-* **feedback_recording_ui.py** - A subclass responsible for the UI of a session with a feedback-loop.
+* **recording_ui.py** - Defines the class `RecordingUI`, a public API for recording phase GUIs. This class also implements some shared features of all UIs.
+* **offline_recording_ui.py** - Implements the class `OfflineRecordingUI`, a subclass of `RecordingUI` - responsible for the UI of an offline session.
+* **feedback_recording_ui.py** - Implements the class `FeedbackRecordingUI`, a subclass of `RecordingUI` - responsible for the UI of a session with a feedback-loop.
 * **resources**: (images for UIs)
   * idle.png
   * left.png

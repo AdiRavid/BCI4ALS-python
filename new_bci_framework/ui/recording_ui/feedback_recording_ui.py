@@ -31,11 +31,11 @@ class FeedbackRecordingUI(RecordingUI):
         self.img_loc = self.screen_width / 2, 4 * self.screen_height / 7
 
         # BG (soccer field):
-        self.field = pg.image.load('new_bci_framework/ui/resources/soccer_field.png')
+        self.field = pg.image.load('new_bci_framework/ui/recording_ui/resources/soccer_field.png')
         self.field = pg.transform.scale(self.field, (self.screen_width, self.screen_height))
 
         # Prediction representation (a soccer goalie):
-        self.goalie = pg.image.load('new_bci_framework/ui/resources/soccer_player.png')
+        self.goalie = pg.image.load('new_bci_framework/ui/recording_ui/resources/soccer_player.png')
         goalie_size = 80
         self.goalie = pg.transform.scale(self.goalie, (goalie_size, goalie_size))
         self.goalie_center = (self.screen_width / 2 - goalie_size / 2, self.screen_height / 11 - goalie_size / 2)
@@ -47,7 +47,7 @@ class FeedbackRecordingUI(RecordingUI):
                                  'IDLE': self.goalie_center}
 
         # True label representation (a soccer ball):
-        self.ball = pg.image.load('new_bci_framework/ui/resources/soccer_ball.png')
+        self.ball = pg.image.load('new_bci_framework/ui/recording_ui/resources/soccer_ball.png')
         ball_size = 50
         self.ball = pg.transform.scale(self.ball, (ball_size, ball_size))
         self.ball_center = [self.screen_width / 2 - ball_size / 2, 10 * self.screen_height / 11 - ball_size / 2]
@@ -63,7 +63,7 @@ class FeedbackRecordingUI(RecordingUI):
 
     def display_event(self, recorder: Recorder, label: str, surface: pg.Surface) -> None:
         """
-        see :func:'setup <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.display_event>'
+        see :func:'display_event <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.display_event>'
         In addition, this method adds a 'Processing' screen which waits for preprocessing and prediction on the data
         from the event that was just displayed.
         """
@@ -80,7 +80,7 @@ class FeedbackRecordingUI(RecordingUI):
 
     def display_prediction(self, truth: int, prediction: int) -> None:
         """
-        see :func:'setup <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.display_event>'
+        see :func:'display_prediction <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.display_event>'
         In this design, the prediction will be shown as a soccer penalty-kick: The ball will move according to the
         true label and the goalie blocks if the prediction is correct.
         """
@@ -95,7 +95,7 @@ class FeedbackRecordingUI(RecordingUI):
 
     def quit(self) -> None:
         """
-        see :func:'setup <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.quit>'
+        see :func:'quit <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.quit>'
         """
         self.clear_surface(self.screen)
         sleep(self.config.PAUSE_LENGTH)

@@ -1,3 +1,6 @@
+########################################################################################################################
+#                                                      Imports                                                         #
+########################################################################################################################
 from new_bci_framework.config.config import Config
 from new_bci_framework.recorder.recorder import Recorder
 from new_bci_framework.ui.recording_ui.recording_ui import RecordingUI
@@ -6,12 +9,14 @@ from new_bci_framework.preprocessing.preprocessing_pipeline import Preprocessing
 from new_bci_framework.classifier.base_classifier import BaseClassifier
 
 
+########################################################################################################################
+#                                                   Implementation                                                     #
+########################################################################################################################
 class Session:
     """
     Base class for an EEG session, with online or offline recording, or analysis of previous recordings.
-    simple public api for creating and running the session.
+    Simple public api for creating and running the session.
     """
-
     def __init__(self, config: Config, recorder: Recorder, ui: RecordingUI,
                  paradigm: Paradigm, preprocessor: PreprocessingPipeline,
                  classifier: BaseClassifier):
@@ -25,48 +30,52 @@ class Session:
         self.processed_data = None
         self.labels = None
         self.data_in_features = None
-        self.filename = ""
-        self.save = True
 
-    ## run recording with the initiated paradigm.
-    ## if save=true, then save the recoreded data to the data directory.
-    def run_recording(self):
+    def run_recording(self, save=True) -> None:
+        """
+        Runs the recording phase with the initiated paradigm.
+        If save = True, then save the recorded data to the data directory.
+        See :class:`Recorder`
+        """
         self.recorder.start_recording()
         self.recorder.plot_live_data()
         self.run_paradigm()
         self.recorder.end_recording()
 
-        if self.save:
+        if save:
             self.raw_data = self.recorder.get_raw_data()
             self.raw_data.save(f'new_bci_framework/../data/{self.config.SUBJECT_NAME}_{self.config.DATE}_raw.fif')
 
-    def run_paradigm(self):
+    def run_paradigm(self) -> None:
+        """
+
+        :return:
+        """
         raise NotImplementedError
 
-    ## run preprocessing on the data.
-    def run_preprocessing(self):
+    def run_preprocessing(self) -> None:
+        """
+        Runs the preprocessing pipeline which returns the preprocessed data - an ndarray of shape n_trials x n_features,
+        and the labels - an ndarray of shape n_trials x 1.
+        See :class:`PreprocessingPipeline`
+        """
         self.processed_data, self.labels = self.preprocessor.run_pipeline(self.raw_data)
 
-    def run_classifier(self):
+    def run_classifier(self) -> None:
+        """
+        Fits the classifier to the data.
+        """
         raise NotImplementedError
 
-    ## run pipeline over the data.
-    ## if data is not given, run recoreding. otherwise use given data.
     def run_all(self, raw_data=None):
+        """
+        Runs the entire session - recording (if raw_data is None), preprocessing, classification.
+        :param raw_data: An mne Raw object storing a recording session.
+        """
         if not raw_data:  # if no data given, evoke the recorder
             self.run_recording()
             self.raw_data = self.recorder.get_raw_data()
         else:  # if raw_data is given, skip recording
             self.raw_data = raw_data
-
-        # self.filename = self.raw_data.filenames[0].split('/')[-1].split('.')[0]
         self.run_preprocessing()
         self.run_classifier()
-
-    @staticmethod
-    def load_session(session_dir: str):
-        """
-        Load a previously recorded session from disk to preform analysis.
-        :param session_dir: saved session directory
-        :return: Session object
-        """

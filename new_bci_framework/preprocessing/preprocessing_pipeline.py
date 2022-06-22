@@ -108,8 +108,8 @@ class PreprocessingPipeline:
         self.processed_data = processed_data_df.to_numpy()
 
         # save features list
-        filename = raw.filenames[0].split('/')[-1].split('.')[0]
-        processed_data_df.to_excel(os.path.join("new_bci_framework", "preprocessing", filename + "_" + "all_features.xlsx"))
+        # filename = raw.filenames[0].split('/')[-1].split('.')[0]
+        # processed_data_df.to_excel(os.path.join("new_bci_framework", "preprocessing", filename + "_" + "all_features.xlsx"))
 
         self.labels = np.asarray(self.epochs.events[:, 2])
         return self.processed_data, self.labels

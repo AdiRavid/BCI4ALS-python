@@ -10,12 +10,15 @@ from new_bci_framework.classifier.base_classifier import BaseClassifier
 
 class FeedbackSession(Session):
     """
-    Subclass of session for an feedback recording session.
+    Subclass of session for a feedback recording session.
+    In this session the classifier is pre-trained (loaded from pickle) and for each recorded trial the prediction is
+    displayed.
     """
     def __init__(self, config: Config, recorder: Recorder, ui: RecordingUI, paradigm: Paradigm,
                  preprocessor: PreprocessingPipeline, classifier: BaseClassifier):
         super().__init__(config, recorder, ui, paradigm, preprocessor, classifier)
         self.classifier.load_classifier()
+        self.data = None
 
     def run_paradigm(self):
         events = self.paradigm.get_events()
@@ -28,17 +31,23 @@ class FeedbackSession(Session):
                 break
             self.ui.clear_surface(self.ui.msg_surface)
             self.ui.display_event(self.recorder, events[i], self.ui.msg_surface)
-            self.run_all()
+            self.run_partial()
             for t, p in zip(self.labels, self.classifier.predict(self.processed_data)):
                 self.ui.display_prediction(t, p)
 
         self.ui.quit()
 
-    def run_classifier(self):
+    def run_partial(self):
+        self.raw_data = self.recorder.get_partial_raw_data()
+        self.run_preprocessing()
+
+    def run_classifier(self) -> None:
+        """
+        Currently
+        """
         pass
 
-    def run_all(self, data=None):
-        data = self.recorder.get_partial_raw_data()
-        super(FeedbackSession, self).run_all(data)
+    def run_all(self, raw_data=None):
+        super().run_all(raw_data)
 
 

@@ -43,14 +43,14 @@ class OfflineRecordingUI(RecordingUI):
 
     def display_event(self, recorder: Recorder, label: str, surface: pg.Surface) -> None:
         """
-        see :func:'setup <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.display_event>'
+        see :func:'display_event <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.display_event>'
         """
         sleep(self.config.PAUSE_LENGTH)
         super(OfflineRecordingUI, self).display_event(recorder, label, surface)
 
     def clear_surface(self, surface: pg.Surface) -> None:
         """
-        see :func:'setup <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.clear_surface>'
+        see :func:'clear_surface <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.clear_surface>'
         In addition, in this class a progress bar is maintained and is updated when this method is called.
         """
         self.__update_progress_bar()
@@ -58,7 +58,7 @@ class OfflineRecordingUI(RecordingUI):
 
     def quit(self) -> None:
         """
-        see :func:'setup <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.quit>'
+        see :func:'quit <new_bci_framework.ui.recording_ui.recording_ui.RecordingUI.quit>'
         """
         self.curr_work = self.work
         self.clear_surface(self.screen)

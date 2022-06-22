@@ -8,6 +8,7 @@ from new_bci_framework.config.config import Config
 from sklearn.feature_selection import SelectKBest, mutual_info_classif, f_classif, chi2, f_regression
 import pandas as pd
 
+
 class BaseClassifier:
     """
     Basic class for a classifier for session eeg data.
@@ -16,12 +17,13 @@ class BaseClassifier:
 
     def __init__(self, config: Config):
         self._config = config
+        self._model = None
         self.selector = None
 
     def feature_selection(self, X, y):
         num_of_features = 20 #self._config.NUM_OF_FEATURES
         self.selector = SelectKBest(score_func=mutual_info_classif, k=num_of_features)
-        res =  self.selector.fit_transform(X, y)
+        res = self.selector.fit_transform(X, y)
         indices = self.selector.get_support(indices=True)
         pickle.dump(indices, open("feature_selection", 'wb'))
         df = pd.DataFrame(indices)

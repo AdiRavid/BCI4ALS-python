@@ -17,6 +17,12 @@ class Config:
 
         # HEADSET:
         self.GAIN_VALUE = 4
+        HARDWARE_GAIN_SETTINGS = {6: "x1030110Xx2030110Xx3030110Xx4030110Xx5030110Xx6030110Xx7030110Xx8030110XxQ030110"
+                                     "XxW030110XxE030110XxR030110XxT030110XxY131000XxU131000XxI131000X ",
+                                  4: "x1020110Xx2020110Xx3020110Xx4020110Xx5020110Xx6020110Xx7020110Xx8020110XxQ020110"
+                                     "XxW020110XxE020110XxR020110XxT020110XxY121000XxU121000XxI121000X "}
+        self.HARDWARE_GAIN_MSG = HARDWARE_GAIN_SETTINGS.get(self.GAIN_VALUE, None)
+
         self.CHANNELS = ['C3', 'C4', 'Cz',
                          'FC1', 'FC2', 'FC5', 'FC6',
                          'CP1', 'CP2', 'CP5', 'CP6']
@@ -37,7 +43,7 @@ class Config:
         self.PAUSE_LENGTH = 1
         self.CUE_LENGTH = 2
 
-        self.CLASSES_IMS = {val: f'new_bci_framework/ui/resources/{val.lower()}.png' for val in self.CLASSES}
+        self.CLASSES_IMS = {val: f'new_bci_framework/ui/recording_ui/resources/{val.lower()}.png' for val in self.CLASSES}
 
         # PREPROCESSING:
         self.SESSION_SAVE_DIR = '../..'
