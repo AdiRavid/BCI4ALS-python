@@ -12,4 +12,9 @@ class DummyClassifier(BaseClassifier):
         super().__init__(config)
 
     def predict(self, data: np.ndarray):
+        """
+        preforms the prediction on the given data
+        :param data: data to predict on
+        :return: classification for the data
+        """
         return np.random.choice(list(self._config.LABELS2MARKERS.values()), 1)

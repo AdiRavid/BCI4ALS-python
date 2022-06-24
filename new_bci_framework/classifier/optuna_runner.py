@@ -9,7 +9,11 @@ from sklearn.linear_model import LogisticRegression
 def run_optuna_xgb(X, y):
     """
     runs optuna hyper-parameter optimaizer on the given X data and y labels for the xgb classifier
+    :param X: data
+    :param y: labels
+    :return: best parameters for xgb
     """
+
     def objective_xgb(trial):
         # data loading and train-test split
         X_train, X_test, y_train, y_test = train_test_split(X, y)
@@ -50,6 +54,9 @@ def run_optuna_xgb(X, y):
 def run_optuna_LR(X, y):
     """
     runs optuna hyper-parameter optimaizer on the given X data and y labels for the logistic regression classifier
+    :param X: data
+    :param y: labels
+    :return: best parameters for logistic regression
     """
     def objective_LR(trial):
         # data loading and train-test split
@@ -83,6 +90,9 @@ def run_optuna_LR(X, y):
 def run_optuna_RF(X, y):
     """
     runs optuna hyper-parameter optimaizer on the given X data and y labels for the random forest classifier
+    :param X: data
+    :param y: labels
+    :return: best parameters for random forest
     """
     def objective_RF(trial):
         # data loading and train-test split
