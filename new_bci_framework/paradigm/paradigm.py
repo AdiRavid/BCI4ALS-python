@@ -7,7 +7,6 @@ class Paradigm:
     types of stimulus, the number of classes, trials etc.
     Subclasses may represent different paradigms such as p300, MI, etc.
     """
-
     def __init__(self, config: Config):
         self.config = config
 

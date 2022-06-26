@@ -21,6 +21,11 @@ class FeedbackSession(Session):
         self.data = None
 
     def run_paradigm(self):
+        """
+        see :func:'run_paradigm <new_bci_framework.session.Session.run_paradigm>'
+        In addition, this method also runs preprocessing and classifier predictions on each event, to present to the
+        subject and creat a neuro-feedback loop.
+        """
         events = self.paradigm.get_events()
         work = len(events)
 
@@ -31,23 +36,23 @@ class FeedbackSession(Session):
                 break
             self.ui.clear_surface(self.ui.msg_surface)
             self.ui.display_event(self.recorder, events[i], self.ui.msg_surface)
-            self.run_partial()
+            self.run_preprocessing()
             for t, p in zip(self.labels, self.classifier.predict(self.processed_data)):
                 self.ui.display_prediction(t, p)
 
         self.ui.quit()
 
-    def run_partial(self):
+    def run_preprocessing(self) -> None:
+        """
+        see :func:'run_preprocessing <new_bci_framework.session.Session.run_preprocessing>'
+        Uses the super class's implementation on data from a single trial.
+        """
         self.raw_data = self.recorder.get_partial_raw_data()
-        self.run_preprocessing()
+        super(FeedbackSession, self).run_preprocessing()
 
     def run_classifier(self) -> None:
         """
-        Currently
+        Currently we are skipping this step and retraining separately from recording, but this method can implement
+        updating the trained classifier with the new data recorded in this session.
         """
         pass
-
-    def run_all(self, raw_data=None):
-        super().run_all(raw_data)
-
-

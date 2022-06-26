@@ -48,8 +48,9 @@ class Session:
 
     def run_paradigm(self) -> None:
         """
-
-        :return:
+        The main part of the recording phase, obtains the events from the Paradigm and runs the UI accordingly,
+        while recording.
+        See :class:`Paradigm` and :class: `RecordingUI`
         """
         raise NotImplementedError
 
@@ -64,13 +65,15 @@ class Session:
     def run_classifier(self) -> None:
         """
         Fits the classifier to the data.
+        See :class:`BaseClassifier`
         """
         raise NotImplementedError
 
-    def run_all(self, raw_data=None):
+    def run_all(self, raw_data=None) -> None:
         """
         Runs the entire session - recording (if raw_data is None), preprocessing, classification.
-        :param raw_data: An mne Raw object storing a recording session.
+        :param raw_data: An mne Raw object storing a recording session. If not None, session starts from after
+        recording step.
         """
         if not raw_data:  # if no data given, evoke the recorder
             self.run_recording()
