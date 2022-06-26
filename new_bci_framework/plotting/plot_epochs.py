@@ -13,6 +13,11 @@ run_filter = True # if true, preprocessing (filtering) will run before plotting
 
 
 def plot_epochs(raw_data_path, run_filter=False):
+    """
+    receives raw_data_path and plots its average epochs per class
+    if run_filter is True then the plotting is done after filtering
+    plots average psd for each class and plots its average epoch.
+    """
     config = Config(num_trials=30, synth= True)
     boardID = BoardIds.SYNTHETIC_BOARD
     session = OfflineSession(
