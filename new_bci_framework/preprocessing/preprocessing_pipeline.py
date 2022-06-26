@@ -8,6 +8,7 @@ from mne_features.feature_extraction import extract_features
 from new_bci_framework.config.config import Config
 from autoreject import AutoReject
 
+
 class PreprocessingPipeline:
     """
     A Preprocessing pipeline. In essence it receives a raw data object and returns teh segmented data as
@@ -27,6 +28,12 @@ class PreprocessingPipeline:
         self.epochs: Optional[mne.Epochs] = None
 
     def _filter(self, raw: mne.io.Raw) -> Tuple[mne.io.Raw, np.ndarray]:
+        """
+        Receives raw data and filters it:
+            1. lowpass-highpass filter according to freqs from config (HIGH_PASS_FILTER, LOW_PASS_FILTER)
+            2. notch filter according to _config.NOTCH_FILTER
+        Returns new updated raw and ndarray of events
+        """
         events = mne.find_events(raw)
         raw = raw.drop_channels('stim')
 
@@ -38,6 +45,10 @@ class PreprocessingPipeline:
         return raw, events
 
     def _segment(self, raw: mne.io.Raw, events: np.ndarray) -> mne.Epochs:
+        """
+        Segments raw data according to events.
+        Returns epochs.
+        """
         epochs = mne.Epochs(raw,
                             events,
                             tmin=self._config.TRIAL_START_TIME,
@@ -52,6 +63,7 @@ class PreprocessingPipeline:
         """
         rejects bad epochs according to the algorithm: https://autoreject.github.io/stable/explanation.html
         and runs ica on good epochs after to fix artifacts.
+        updates self.epochs after rejection and fixing.
         """
         ar = AutoReject(verbose=True)
         epochs_clean, reject_log = ar.fit_transform(self.epochs, True)
@@ -66,15 +78,22 @@ class PreprocessingPipeline:
                    2]  # saccades
 
         # uncomment for plotting ica components
-        #ica.plot_components(exclude)
-        #ica.exclude = exclude
+        # ica.plot_components(exclude)
+        # ica.exclude = exclude
 
         self.epochs = epochs_ica
 
     def __baseline_correction(self):
+        """
+        apply baseline correction to epochs.
+        according to autoreject documentation (see _reject()) baseline correction should be applied after autoreject.
+        """
         self.epochs = self.epochs.apply_baseline(baseline=(None, None), verbose=True)
 
-    def __feature_extraction(self, raw):
+    def __feature_extraction(self) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        extracts features from self.epochs and returns a tuple of [data,labels] to feed to classifier
+        """
         highpass = self._config.HIGH_PASS_FILTER
         lowpass = self._config.LOW_PASS_FILTER
 
@@ -86,15 +105,14 @@ class PreprocessingPipeline:
                      [30, 40],
                      [40, 45]]  # check which frequencies are relevant
 
-
         # feature documentation - https://mne.tools/mne-features/api.html
         # amplitude related features (rms,mean,std,skewness,ptp_amp) were commented out when working
         # with combined data from multiple session due to variability in amplitudes across sessions.
-        selected_funcs = {'pow_freq_bands', #'rms',
+        selected_funcs = {'pow_freq_bands',  # 'rms',
                           'spect_edge_freq',
                           'spect_entropy',
                           'spect_slope', 'variance',
-                          #'mean','std', 'skewness', 'ptp_amp',
+                          # 'mean','std', 'skewness', 'ptp_amp',
                           'hjorth_mobility', 'hjorth_complexity'
                           }
         func_params = {'pow_freq_bands__freq_bands': np.asarray(bands_mat),
@@ -114,9 +132,11 @@ class PreprocessingPipeline:
         self.labels = np.asarray(self.epochs.events[:, 2])
         return self.processed_data, self.labels
 
-
-
     def run_pipeline(self, raw: mne.io.Raw) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        receives raw data and runs the whole pipeline
+        returns a tuple of [data,labels] to feed to classifier
+        """
         # 1. highpass-lowpass & notch filter:
         raw, events = self._filter(raw)
 
@@ -136,4 +156,4 @@ class PreprocessingPipeline:
 
         # 6. Extract all features from each epoch
         #    returns data_in_features,labels to feed the classifier
-        return self.__feature_extraction(raw)
+        return self.__feature_extraction()
