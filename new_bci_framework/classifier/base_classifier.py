@@ -21,17 +21,23 @@ class BaseClassifier:
         self.selector = None
 
     def feature_selection(self, X, y):
-        num_of_features = 20 #self._config.NUM_OF_FEATURES
+        """
+        select features from given data, using Select K best.
+        save the selected features to csv for documentation.
+        """
+        num_of_features = self._config.NUM_OF_FEATURES
         self.selector = SelectKBest(score_func=mutual_info_classif, k=num_of_features)
         res = self.selector.fit_transform(X, y)
         indices = self.selector.get_support(indices=True)
-        pickle.dump(indices, open("feature_selection", 'wb'))
         df = pd.DataFrame(indices)
         df.to_csv('feature_selection.csv', index=False)
 
         return res
 
     def save_features(self):
+        """
+        save the selected feature to pickle.
+        """
         indices = self.selector.get_support(indices=True)
         pickle.dump(indices, open("feature_selection", 'wb'))
         # also save as txt for debug
@@ -48,8 +54,10 @@ class BaseClassifier:
         raise NotImplementedError
 
     def evaluate(self, X: np.ndarray, y: np.ndarray):
-        # transform is called in predict
-        # X = self.selector.transform(X)
+        """
+        evaluate the model with the given data.
+        print to console the result and create plot of confusion matrix.
+        """
         self.save_classifier()
         prediction = self.predict(X)
         print("----------------------- EVALUATION --------------------------")
@@ -62,10 +70,6 @@ class BaseClassifier:
         )
         cmp.plot()
         plt.show()
-        # conf_mat = confusion_matrix(y, prediction)
-        # sn.heatmap(conf_mat, annot=True)
-        # plt.title('confusion matrix for XGB')
-        # plt.show()
 
     def save_classifier(self):
         raise NotImplementedError
