@@ -7,6 +7,9 @@ Contact us:
 * [Shay Grunwald](mailto:shay.grunwald@mail.huji.ac.il)
 * [Adi Ravid](mailto:adi.ravid1@mail.huji.ac.il)
 
+
+####_Also look at the [data README](README-Data.md)_
+
 ## new_bci_framework
 ___
 #### Python framework for the 2022 BCI4ALS course by team 33 HUJI.
@@ -91,12 +94,7 @@ Utilities for plotting
 * **plot_epochs.py** - we use this code to plot the average of epochs by class for a single fif file. 
   The script also plots average psd for each class as well as average eeg epoch.  
 
-
-## data
-___
-_A directory keeping a description of the raw data files, and pointing at their location. Take a look at the [README](data/README.md)._ 
-
-
+  
 ## archived_code
 ___
 _Unused code, mostly old classifiers._
