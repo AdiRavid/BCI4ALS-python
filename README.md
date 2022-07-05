@@ -93,9 +93,9 @@ ___
 
 ## data
 ___
-_A directory storing the raw data files. Take a look at the [README](data/README.md)._ 
+_A directory keeping a description of the raw data files, and pointing at their location. Take a look at the [README](data/README.md)._ 
 
 
 ## archived_code
 ___
-_Code for unused classifiers._
+_Unused code, mostly old classifiers._
