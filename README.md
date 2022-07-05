@@ -19,7 +19,7 @@ _General framework and part of the code in the recorder classes was taken from
 ___
 In almost every directory there is a file that specifies the desired behaviour for this type of class.
 
-In order to run our framework run main.py. 
+In order to run our framework run main.py.
 
 * main.py - **TODO - add description of main once we know what we want to have there.** 
 
@@ -37,7 +37,7 @@ The 'manager' of a recording session: runs the recording, the preprocessing and 
 
 ### paradigm
 ___
-* **paradigm.py** - Defines the class `Paradigm` - public API for experiment paraidgms.
+* **paradigm.py** - Defines the class `Paradigm` - public API for the experiment's paradigms.
 * **MI_paradigm.py** - Implements the class `MIParadigm`, a subclass of `Paradigm` - used for generating Motor Imagery events (according to configuration file).
 * **p300_paradigm.py** - Defines the class `P300Paradigm`, a subclass of `Paradigm` - used for generating P300 events. Currently, not implemented.
 
@@ -82,11 +82,12 @@ ___
 * **xgb_classifier.py** - XGB classifier.
 * **random_forest_classifier.py** - Random Forest classifier.
 * **logistic_regression_classifier.py** - Logistic Regression classifier.  
-* **ensemble_classifier.py** - Ensemble classifier of xgb models. The ensemble is an array of xgb models, that decide using "major voting".  
+* **ensemble_classifier.py** - Ensemble classifier of xgb models. The ensemble is an array of xgb models that decide using "major voting".  
 * **optuna_runner.py** - A helper file containing 3 functions which runs optuna (A hyperparameter optimization framework) for xgb classifier, RandomForest classifier and LogisiticRegression classifier.
 
 ### plotting
 ___
+Utilities for plotting
 * **plot_epochs.py** - we use this code to plot the average of epochs by class for a single fif file. 
   The script also plots average psd for each class as well as average eeg epoch.  
 
