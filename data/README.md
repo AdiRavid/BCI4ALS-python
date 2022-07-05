@@ -3,13 +3,17 @@
 
 ## General
 ___
-In general, over 900 trial were recorded from the mentor, out of them around 100 were not dropped during preprocessing.
-In addition, most remaining trails were either 'LEFT' or 'RIGHT':  
-![img.png](README_resources/epochs_dist.png)
+Over 900 trial were recorded from the mentor and over 700 from us - all the recordings can be found [here](https://drive.google.com/drive/u/0/folders/1rp6hpcxEi11E6CE1mR3opdyKGXiShJSd). 
+
+Unfortunately, most of the data from the mentor was very noisy, as will be described in this README.
 
 ## Mentor Python Recordings
 ___
 Most recordings from the mentor were obtained using the python CytonRecorder class and are saved in the format **Subject_yyyy-mm-dd-hh-mm_raw.fif**.
+
+Out of over 900 recording, after rejecting bad epochs during preprocessing, only around 100 were not dropped.
+In addition, most remaining trails were either 'LEFT' or 'RIGHT':  
+![img.png](README_resources/epochs_dist.png)
 
 ### 28-04-2022:
 * 270 trials in 4 different recordings.
@@ -40,3 +44,9 @@ ___
 * 720 events in 12 different recordings.
 * Very good data:  
 ![img_2.png](README_resources/sivan_raw.png)
+
+## Recordings from 07-05-2022:
+To eliminate the mentor's house as the cause of noise (due to a lot of electrical machines), we recorded 2 recordings at the same location, on the same day, under similar settings, once on Sivan and once on the mentor.
+The results rule out the location as the cause for noise, but raise many new questions.
+We hypothesize that some of the noise may come from the respirator.
+![img.png](README_resources/Sivan_mentor_comp.png)
