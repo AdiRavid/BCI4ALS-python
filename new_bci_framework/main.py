@@ -30,35 +30,8 @@ from new_bci_framework.session.feedback_session import FeedbackSession
 from new_bci_framework.ui.recording_ui.feedback_recording_ui import FeedbackRecordingUI
 
 
-# search_path = os.path.join(os.getcwd(), "data", "Sivan")
-
-
-def run_pipeline_for_directory(path, session):
-    files = (list(filter(lambda f: f.endswith(".fif"), os.listdir(os.path.join(os.getcwd(), path)))))
-    random.shuffle(files)
-    for idx, file in enumerate(files):
-        print(f"<--- Start process file {idx}: {file} --->")
-        if idx == (len(files) - 1):
-            session.run_all_without_classifier(
-                raw_data_path=os.path.join(os.getcwd(), path, file))
-        else:
-            session.run_all_for_ensammble(raw_data_path=os.path.join(os.getcwd(), path, file))
-
-
-def concat_files(search_path):
-    raws = []
-    for root, dir, files in os.walk(search_path):
-        for file in files:
-            if file.endswith(".fif") and 'Sivan' in file:
-                file_full_path = os.path.join(root, file)
-                raws.append(read_raw_fif(file_full_path, preload=True))
-
-    concated_raw = mne.concatenate_raws(raws)
-
-    concated_raw.save(os.path.join(search_path, "data", "Sivan", "sivan_all_files.csv"))
-
-
 if __name__ == '__main__':
+    # Currently the main is running offline recording.
     synth = False  # TODO - Change for synthetic recording
 
     config = Config(num_trials=30, synth=synth)

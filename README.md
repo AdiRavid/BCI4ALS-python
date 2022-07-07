@@ -24,7 +24,7 @@ In almost every directory there is a file that specifies the desired behaviour f
 
 In order to run our framework run main.py.
 
-* main.py - **TODO - add description of main once we know what we want to have there.** 
+* main.py - creates a session (currently offline setting) which holds all the components of a session, and can run any step separately or the entire pipeline. 
 
 ### config
 ___
