@@ -32,14 +32,14 @@ from new_bci_framework.ui.recording_ui.feedback_recording_ui import FeedbackReco
 
 if __name__ == '__main__':
     # Currently the main is running offline recording.
-    synth = False  # TODO - Change for synthetic recording
+    synth = True  # TODO - Change for real recordings
 
     config = Config(num_trials=30, synth=synth)
     boardID = BoardIds.SYNTHETIC_BOARD if synth else BoardIds.CYTON_DAISY_BOARD
-    session = FeedbackSession(
+    session = OfflineSession(
         config=config,
         recorder=CytonRecorder(config, board_id=boardID),
-        ui=FeedbackRecordingUI(config),
+        ui=OfflineRecordingUI(config),
         paradigm=MIParadigm(config),
         preprocessor=PreprocessingPipeline(config),
         classifier=DummyClassifier(config)

@@ -18,3 +18,6 @@ class DummyClassifier(BaseClassifier):
         :return: classification for the data
         """
         return np.random.choice(list(self._config.LABELS2MARKERS.values()), 1)
+
+    def load_classifier(self):
+        pass
